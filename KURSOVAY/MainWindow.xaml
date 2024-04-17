@@ -7,16 +7,16 @@
         xmlns:vm="clr-namespace:KURSOVAY.ViewModels"
         xmlns:local="clr-namespace:KURSOVAY"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" WindowState="Maximized">
+        Title="MainWindow" Height="450" Width="800" WindowState="Maximized" Background="Gray">
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
     <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding Window_ContentRenderedCommand}" CommandParameter="{Binding ElementName=MyGrid}"/>
+        <i:EventTrigger EventName="ContentRendered">
+            <i:InvokeCommandAction Command="{Binding Window_ContentRenderedCommand}" CommandParameter="{Binding ElementName=MainGrid}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid Name="MyGrid">
-        <Image ></Image>
+    <Grid Name = "MainGrid">
+        <Image Source="{Binding WB,Mode=OneWay}"></Image>
     </Grid>
 </Window>
