@@ -1,6 +1,7 @@
 ﻿using KURSOVAY.CustomDataTypes;
 using KURSOVAY.Utilities;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -12,6 +13,7 @@ namespace KURSOVAY.ViewModels
 	{
 		private Scene scene;
 		private WriteableBitmap _wb;
+		private string path = "5.obj";
 		public WriteableBitmap WB
 		{
 			get => _wb;
@@ -21,25 +23,29 @@ namespace KURSOVAY.ViewModels
 				OnPropertyChanged(nameof(WB));
 			}
 		}
-		private async void Getting()
-		{
-			if (scene.ready)
-			{
-				WB = scene.WB;
-			}
-			else
-			{
-				await Task.Delay(100);
-				Getting();
-			}
-		}
 		private ICommand _window_ContentRenderedCommand;
 		public ICommand Window_ContentRenderedCommand => _window_ContentRenderedCommand ??= new RelayCommand(OnWindowRenderedExecute);
 		private void OnWindowRenderedExecute(object parameter)
 		{
 			Grid grid = (Grid)parameter;
-			scene = new Scene(Figure.GetObj("5.obj"), new System.Windows.Size(grid.ActualWidth, grid.ActualHeight));
-			Getting();
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
+			scene = new Scene(Figure.GetObj(path), new System.Windows.Size(grid.ActualWidth - 1, grid.ActualHeight - 1));
+			scene.PictureUpdate();
+			WB = scene.WB;
+			stopwatch.Stop();
+		}
+		private ICommand _windowKeyUp;
+		public ICommand WindowKeyUp => _windowKeyUp ??= new RelayCommand(On_WindowKeyUpExecute);
+		private void On_WindowKeyUpExecute(object parameter)
+		{
+			Grid grid = (Grid)parameter;
+			Stopwatch stopwatch = new Stopwatch();
+			stopwatch.Start();
+			scene = new Scene(Figure.GetObj(path), new System.Windows.Size(grid.ActualWidth - 1, grid.ActualHeight - 1));
+			scene.PictureUpdate();
+			WB = scene.WB;
+			stopwatch.Stop();
 		}
 		public event PropertyChangedEventHandler PropertyChanged;
 
