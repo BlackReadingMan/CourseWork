@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using KURSOVAY.ViewModels;
+using System.Windows;
 
 namespace KURSOVAY
 {
@@ -11,5 +12,10 @@ namespace KURSOVAY
 		{
 			InitializeComponent();
 		}
-	}
+
+		private void Window_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			((MainWindowViewModel)DataContext).On_WindowKeyUpExecute(e);
+        }
+    }
 }

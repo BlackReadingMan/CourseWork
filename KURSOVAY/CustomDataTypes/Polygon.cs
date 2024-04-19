@@ -5,13 +5,13 @@ using System.Windows.Media;
 
 namespace KURSOVAY.CustomDataTypes
 {
-	internal class Triangle
+	internal class Polygon
 	{
 		private Vector4 point1;
 		private Vector4 point2;
 		private Vector4 point3;
 		private Color color;
-		public Triangle(in Vector4 _point1, in Vector4 _point2, in Vector4 _point3, in Color _color)
+		public Polygon(in Vector4 _point1, in Vector4 _point2, in Vector4 _point3, in Color _color)
 		{
 			point1 = _point1;
 			point2 = _point2;

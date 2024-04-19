@@ -41,22 +41,22 @@ namespace KURSOVAY.Algorithm
 		{
 			List<Point> points = [];
 			double dx = point2.X - point1.X;
-			double dz = point2.Y - point1.Y;
+			double dy = point2.Y - point1.Y;
 
-			double step = Math.Max(Math.Abs(dx), Math.Abs(dz));
+			double step = Math.Max(Math.Abs(dx), Math.Abs(dy));
 
 
 			double x_incr = dx / step;
-			double z_incr = dz / step;
+			double y_incr = dy / step;
 
 			double x = point1.X;
-			double z = point1.Y;
+			double y = point1.Y;
 
 			for (int i = 0; i < step; i++)
 			{
-				points.Add(new Point(x, z));
+				points.Add(new Point(x, y));
 				x += x_incr;
-				z += z_incr;
+				y += y_incr;
 			}
 			return points;
 		}
@@ -72,7 +72,7 @@ namespace KURSOVAY.Algorithm
 			Vector3 result = (ambient + diffuse) * objectColor;
 			return Color.FromRgb((byte)(result.X * 255f), (byte)(result.Y * 255f), (byte)(result.Z * 255f));
 		}
-		public static Vector4 VectorMatrixMultiplication(in Matrix4x4 inputMatrix, in Vector4 vector)
+		public static Vector4 VectorMatrixMultiplication(in Vector4 vector, in Matrix4x4 inputMatrix)
 		{
 			Vector4 result = new();
 			for (var i = 0; i < 4; i++)
@@ -84,13 +84,8 @@ namespace KURSOVAY.Algorithm
 					result[i] += inputMatrix[k, i] * vector[k];
 				}
 			}
+			result /= result.W;
 			return result;
-		}
-		public static Vector4 MakeWorldPoint(in Vector4 point, in Matrix4x4 final)
-		{
-			Vector4 point1 = VectorMatrixMultiplication(final, point);
-			point1 /= point1.W;
-			return point1;
 		}
 	}
 }

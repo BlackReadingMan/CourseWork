@@ -7,6 +7,7 @@
         xmlns:vm="clr-namespace:KURSOVAY.ViewModels"
         xmlns:local="clr-namespace:KURSOVAY"
         mc:Ignorable="d"
+        KeyUp="Window_KeyUp"
         Title="MainWindow" Height="450" Width="800" WindowState="Maximized" Background="Gray"
         >
     <Window.DataContext>
@@ -16,11 +17,9 @@
         <i:EventTrigger EventName="ContentRendered">
             <i:InvokeCommandAction Command="{Binding Window_ContentRenderedCommand}" CommandParameter="{Binding ElementName=MainGrid}"/>
         </i:EventTrigger>
-        <!--<i:EventTrigger EventName="KeyUp">
-            <i:InvokeCommandAction Command="{Binding WindowKeyUp}" CommandParameter="{Binding ElementName=MainGrid}"/>
-        </i:EventTrigger>-->
     </i:Interaction.Triggers>
     <Grid Name = "MainGrid">
-        <Image Source="{Binding WB,Mode=OneWay}"></Image>
+        <Image Source="{Binding Render,Mode=OneWay}" Panel.ZIndex="0"></Image>
+        <Label Content="{Binding Render_time}" FontSize="20" Panel.ZIndex="1" HorizontalAlignment="Right" VerticalAlignment="Top" Foreground="White"/>
     </Grid>
 </Window>
