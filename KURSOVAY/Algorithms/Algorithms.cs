@@ -7,7 +7,7 @@ namespace KURSOVAY.Algorithm
 {
 	internal static class Algorithms
 	{
-		public static void CDA(in Vector4 point1, in Vector4 point2, ref Dictionary<double, Tuple<Point, Point>> lines)
+		public static void CDA(in Vector4 point1, in Vector4 point2, ref Dictionary<int, Tuple<Point, Point>> lines)
 		{
 			double dx = point2.X - point1.X;
 			double dy = point2.Y - point1.Y;
@@ -24,14 +24,15 @@ namespace KURSOVAY.Algorithm
 
 			for (int i = 0; i < step; i++)
 			{
-				if (lines.TryGetValue(Math.Round(y), out Tuple<Point, Point>? check))
+				int key = (int)Math.Round(y,MidpointRounding.ToZero);
+				if (lines.TryGetValue(key, out Tuple<Point, Point>? check))
 					if (x < check.Item1.X)
-						lines[Math.Round(y)] = new Tuple<Point, Point>(new Point(x, z), check.Item2);
+						lines[key] = new Tuple<Point, Point>(new Point(x, z), check.Item2);
 					else
 						if (x > check.Item2.X)
-						lines[Math.Round(y)] = new Tuple<Point, Point>(check.Item1, new Point(x, z));
+						lines[key] = new Tuple<Point, Point>(check.Item1, new Point(x, z));
 				if (check == null)
-					lines.Add(Math.Round(y), new Tuple<Point, Point>(new Point(x, z), new Point(x, z)));
+					lines.Add(key, new Tuple<Point, Point>(new Point(x, z), new Point(x, z)));
 				x += x_incr;
 				y += y_incr;
 				z += z_incr;

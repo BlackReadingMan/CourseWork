@@ -20,7 +20,7 @@ namespace KURSOVAY.CustomDataTypes
 		}
 		public void MakeFill()
 		{
-			Dictionary<double, Tuple<Point, Point>> cheats = [];
+			Dictionary<int, Tuple<Point, Point>> cheats = [];
 			Algorithms.CDA(point1, point2, ref cheats);
 			Algorithms.CDA(point2, point3, ref cheats);
 			Algorithms.CDA(point3, point1, ref cheats);
@@ -28,19 +28,19 @@ namespace KURSOVAY.CustomDataTypes
 			{
 				foreach (var item in Algorithms.CDA(lines.Value.Item1, lines.Value.Item2))
 				{
-					Tuple<int, int> key = new((int)Math.Round(item.X), (int)Math.Round(lines.Key));
-					if (buffer.TryGetValue(key, out Tuple<float, Color>? value))
+					Tuple<int, int> key = new((int)Math.Round(item.X, MidpointRounding.ToZero), lines.Key);
+					if (buffer.TryGetValue(key, out Tuple<double, Color>? value))
 					{
 						if (value.Item1 <= item.Y)
-							buffer[key] = new Tuple<float, Color>((float)item.Y, color);
+							buffer[key] = new Tuple<double, Color>((double)item.Y, color);
 					}
 					if (value == null)
-						buffer.Add(key, new Tuple<float, Color>((float)item.Y, color));
+						buffer.Add(key, new Tuple<double, Color>((double)item.Y, color));
 				}
 			}
 		}
-		private Dictionary<Tuple<int, int>, Tuple<float, Color>> _buffer = [];
-		public Dictionary<Tuple<int, int>, Tuple<float, Color>> buffer
+		private Dictionary<Tuple<int, int>, Tuple<double, Color>> _buffer = [];
+		public Dictionary<Tuple<int, int>, Tuple<double, Color>> buffer
 		{
 			get { return _buffer; }
 			set

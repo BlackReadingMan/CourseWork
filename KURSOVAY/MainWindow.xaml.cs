@@ -12,10 +12,5 @@ namespace KURSOVAY
 		{
 			InitializeComponent();
 		}
-
-		private void Window_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-		{
-			((MainWindowViewModel)DataContext).On_WindowKeyUpExecute(e);
-        }
     }
 }

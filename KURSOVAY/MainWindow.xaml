@@ -5,21 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:vm="clr-namespace:KURSOVAY.ViewModels"
+        xmlns:ct="clr-namespace:KURSOVAY.Controls"
         xmlns:local="clr-namespace:KURSOVAY"
         mc:Ignorable="d"
-        KeyUp="Window_KeyUp"
-        Title="MainWindow" Height="450" Width="800" WindowState="Maximized" Background="Gray"
+        Title="КУРСОВАЯ" Height="450" Width="800" WindowState="Maximized" Background="Green"
         >
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="ContentRendered">
-            <i:InvokeCommandAction Command="{Binding Window_ContentRenderedCommand}" CommandParameter="{Binding ElementName=MainGrid}"/>
+            <i:InvokeCommandAction Command="{Binding Window_ContentRenderedCommand}"/>
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Grid Name = "MainGrid">
-        <Image Source="{Binding Render,Mode=OneWay}" Panel.ZIndex="0"></Image>
-        <Label Content="{Binding Render_time}" FontSize="20" Panel.ZIndex="1" HorizontalAlignment="Right" VerticalAlignment="Top" Foreground="White"/>
+    <Grid>
+        <ct:Scene PaintedFigures="{Binding Current_Figure, Mode=OneWay}" />
     </Grid>
 </Window>
