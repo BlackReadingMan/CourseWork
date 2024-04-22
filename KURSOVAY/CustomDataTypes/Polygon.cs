@@ -32,10 +32,10 @@ namespace KURSOVAY.CustomDataTypes
 					if (buffer.TryGetValue(key, out Tuple<double, Color>? value))
 					{
 						if (value.Item1 <= item.Y)
-							buffer[key] = new Tuple<double, Color>((double)item.Y, color);
+							buffer[key] = new Tuple<double, Color>(item.Y, color);
 					}
 					if (value == null)
-						buffer.Add(key, new Tuple<double, Color>((double)item.Y, color));
+						buffer.Add(key, new Tuple<double, Color>(item.Y, color));
 				}
 			}
 		}

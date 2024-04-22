@@ -51,7 +51,6 @@ namespace KURSOVAY.Controls
 			InitializeComponent();
 			CameraSpherePosition = Radius_PHI_THETA;
 			world = Matrix4x4.CreateWorld(position, forward, up);
-			Picture.Focus();
 		}
 		private WriteableBitmap writeableBitmap;
 		private static readonly DependencyProperty PaintedFiguresProperty = DependencyProperty.Register(nameof(PaintedFigures), typeof(Figure), typeof(Scene),
@@ -76,7 +75,6 @@ namespace KURSOVAY.Controls
 			get { return _cameraSpherePosition; }
 			set
 			{
-
 				CameraPosition = position + new Vector3(
 				(float)(value.X * Math.Sin(value.Y * 2 * Math.PI) * Math.Sin(value.Z * Math.PI)),
 				(float)(value.X * Math.Cos(value.Z * Math.PI)),

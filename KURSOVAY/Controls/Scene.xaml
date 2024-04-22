@@ -10,6 +10,6 @@
     <Grid>
         <Image x:Name="Picture" Panel.ZIndex="0" ></Image>
         <Label x:Name="RenderTimer" FontSize="20" Panel.ZIndex="1" HorizontalAlignment="Right" VerticalAlignment="Top" Foreground="White"/>
-        <Button x:Name="BulletCatcher" HorizontalAlignment="Left" Margin="-255,-34,0,0" VerticalAlignment="Top" KeyDown="Win_KeyDown" Background="#00DDDDDD" BorderBrush="#00707070" Foreground="#00000000"/>
+        <Button x:Name="BulletCatcher" HorizontalAlignment="Left" Margin="1,0,0,0" VerticalAlignment="Top" KeyDown="Win_KeyDown" Background="#00DDDDDD" BorderBrush="#00707070" Foreground="#00000000"/>
     </Grid>
 </UserControl>
