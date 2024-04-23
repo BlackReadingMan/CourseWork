@@ -1,5 +1,4 @@
-﻿using KURSOVAY.ViewModels;
-using System.Windows;
+﻿using System.Windows;
 
 namespace KURSOVAY
 {
@@ -12,5 +11,5 @@ namespace KURSOVAY
 		{
 			InitializeComponent();
 		}
-    }
+	}
 }

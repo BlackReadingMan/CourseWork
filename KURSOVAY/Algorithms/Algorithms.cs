@@ -24,7 +24,7 @@ namespace KURSOVAY.Algorithm
 
 			for (int i = 0; i < step; i++)
 			{
-				int key = (int)Math.Round(y,MidpointRounding.ToZero);
+				int key = (int)Math.Round(y, MidpointRounding.ToZero);
 				if (lines.TryGetValue(key, out Tuple<Point, Point>? check))
 					if (x < check.Item1.X)
 						lines[key] = new Tuple<Point, Point>(new Point(x, z), check.Item2);

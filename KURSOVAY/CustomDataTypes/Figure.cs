@@ -59,7 +59,7 @@ namespace KURSOVAY.CustomDataTypes
 		private static List<string> ReadObj(string filePath)
 		{
 			List<string> lines = [];
-			using (var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(Assembly.GetExecutingAssembly().GetName().Name + ".Resourses." + filePath)))
+			using (var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(Assembly.GetExecutingAssembly().GetName().Name + ".Resources." + filePath)))
 			{
 				string line;
 				while ((line = reader.ReadLine()) != null)
