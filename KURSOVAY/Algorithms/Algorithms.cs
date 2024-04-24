@@ -2,8 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-
-namespace CourseWork.Algorithm
+namespace CourseWork.Algorithms
 {
 	internal static class Algorithms
 	{

@@ -1,19 +1,17 @@
-﻿using System.Diagnostics;
+﻿using CourseWork.CustomDataTypes;
+using System.Diagnostics;
 using System.Numerics;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using CourseWork.Algorithm;
-using CourseWork.CustomDataTypes;
 
 namespace CourseWork.Controls
 {
 	/// <summary>
 	/// Логика взаимодействия для Scene.xaml
 	/// </summary>
-	public partial class Scene : UserControl
+	public partial class Scene
 	{
 		private readonly Vector3 _position = new(0f, 0f, 0f);
 		private readonly Vector3 _forward = new(0f, 0f, -1f);
@@ -47,7 +45,7 @@ namespace CourseWork.Controls
 		private readonly Queue<Polygon> _polygons = [];
 		private Dictionary<Tuple<int, int>, Tuple<double, Color>> _zBuffer = [];
 		private WriteableBitmap? _image;
-		private readonly Stopwatch _stopwatch = new ();
+		private readonly Stopwatch _stopwatch = new();
 		public Scene()
 		{
 			InitializeComponent();
@@ -88,10 +86,10 @@ namespace CourseWork.Controls
 					(PaintedFigures.V[triangle.Item1.Item1 - 1].Y + PaintedFigures.V[triangle.Item2.Item1 - 1].Y + PaintedFigures.V[triangle.Item3.Item1 - 1].Y) / 3f,
 					(PaintedFigures.V[triangle.Item1.Item1 - 1].Z + PaintedFigures.V[triangle.Item2.Item1 - 1].Z + PaintedFigures.V[triangle.Item3.Item1 - 1].Z) / 3f);
 				_polygons.Enqueue(new Polygon(
-					Algorithms.VectorMatrixMultiplication(PaintedFigures.V[triangle.Item1.Item1 - 1], _final),
-					Algorithms.VectorMatrixMultiplication(PaintedFigures.V[triangle.Item2.Item1 - 1], _final),
-					Algorithms.VectorMatrixMultiplication(PaintedFigures.V[triangle.Item3.Item1 - 1], _final),
-					Algorithms.GetColor(PaintedFigures.Vn[triangle.Item1.Item3 - 1], polygonPos, _lightPosition, _lightColor, _objectColor)));
+					Algorithms.Algorithms.VectorMatrixMultiplication(PaintedFigures.V[triangle.Item1.Item1 - 1], _final),
+					Algorithms.Algorithms.VectorMatrixMultiplication(PaintedFigures.V[triangle.Item2.Item1 - 1], _final),
+					Algorithms.Algorithms.VectorMatrixMultiplication(PaintedFigures.V[triangle.Item3.Item1 - 1], _final),
+					Algorithms.Algorithms.GetColor(PaintedFigures.Vn[triangle.Item1.Item3 - 1], polygonPos, _lightPosition, _lightColor, _objectColor)));
 				_threads.Enqueue(new Thread(_polygons.Last().MakeFill));
 				_threads.Last().Start();
 			}
@@ -120,11 +118,11 @@ namespace CourseWork.Controls
 		}
 		private void BuildCoordinateAxes()
 		{
-			var vectorO = Algorithms.VectorMatrixMultiplication(new Vector4(0, 0, 0, 1), _final);
-			var vectorX = Algorithms.VectorMatrixMultiplication(new Vector4(5, 0, 0, 1), _final);
-			var vectorY = Algorithms.VectorMatrixMultiplication(new Vector4(0, 5, 0, 1), _final);
-			var vectorZ = Algorithms.VectorMatrixMultiplication(new Vector4(0, 0, 5, 1), _final);
-			foreach (var key in Algorithms.Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorX.X, vectorX.Y)).Select(item => new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero), (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
+			var vectorO = Algorithms.Algorithms.VectorMatrixMultiplication(new Vector4(0, 0, 0, 1), _final);
+			var vectorX = Algorithms.Algorithms.VectorMatrixMultiplication(new Vector4(5, 0, 0, 1), _final);
+			var vectorY = Algorithms.Algorithms.VectorMatrixMultiplication(new Vector4(0, 5, 0, 1), _final);
+			var vectorZ = Algorithms.Algorithms.VectorMatrixMultiplication(new Vector4(0, 0, 5, 1), _final);
+			foreach (var key in Algorithms.Algorithms.Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorX.X, vectorX.Y)).Select(item => new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero), (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
 				if (_zBuffer.ContainsKey(key))
 				{
@@ -135,7 +133,7 @@ namespace CourseWork.Controls
 					_zBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(255, 0, 0)));
 				}
 			}
-			foreach (var key in Algorithms.Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorY.X, vectorY.Y)).Select(item => new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero), (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
+			foreach (var key in Algorithms.Algorithms.Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorY.X, vectorY.Y)).Select(item => new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero), (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
 				if (_zBuffer.ContainsKey(key))
 				{
@@ -146,7 +144,7 @@ namespace CourseWork.Controls
 					_zBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(0, 255, 0)));
 				}
 			}
-			foreach (var key in Algorithms.Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorZ.X, vectorZ.Y)).Select(item => new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero), (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
+			foreach (var key in Algorithms.Algorithms.Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorZ.X, vectorZ.Y)).Select(item => new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero), (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
 				if (_zBuffer.ContainsKey(key))
 				{

@@ -1,7 +1,6 @@
 ﻿using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
-using CourseWork.Algorithm;
 
 namespace CourseWork.CustomDataTypes
 {
@@ -15,12 +14,12 @@ namespace CourseWork.CustomDataTypes
 		public void MakeFill()
 		{
 			Dictionary<int, Tuple<Point, Point>> cheats = [];
-			Algorithms.Cda(_point1, _point2, ref cheats);
-			Algorithms.Cda(_point2, _point3, ref cheats);
-			Algorithms.Cda(_point3, _point1, ref cheats);
+			Algorithms.Algorithms.Cda(_point1, _point2, ref cheats);
+			Algorithms.Algorithms.Cda(_point2, _point3, ref cheats);
+			Algorithms.Algorithms.Cda(_point3, _point1, ref cheats);
 			foreach (var lines in cheats)
 			{
-				foreach (var item in Algorithms.Cda(lines.Value.Item1, lines.Value.Item2))
+				foreach (var item in Algorithms.Algorithms.Cda(lines.Value.Item1, lines.Value.Item2))
 				{
 					Tuple<int, int> key = new((int)Math.Round(item.X, MidpointRounding.ToZero), lines.Key);
 					if (Buffer.TryGetValue(key, out var value))
