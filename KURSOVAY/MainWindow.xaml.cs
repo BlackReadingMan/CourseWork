@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace KURSOVAY
+namespace CourseWork
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml

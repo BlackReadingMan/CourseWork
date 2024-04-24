@@ -1,33 +1,33 @@
-﻿using KURSOVAY.CustomDataTypes;
-using KURSOVAY.Utilities;
+﻿using CourseWork.CustomDataTypes;
+using CourseWork.Utilities;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
-namespace KURSOVAY.ViewModels
+namespace CourseWork.ViewModels
 {
 	internal class MainWindowViewModel : INotifyPropertyChanged
 	{
-		private readonly string path = "Input.obj";
+		private const string Path = "Input.obj";
 
-		private Figure _current_Figure;
-		public Figure Current_Figure
+		private Figure _currentFigure;
+		public Figure CurrentFigure
 		{
-			get { return _current_Figure; }
+			get => _currentFigure;
 			set
 			{
-				_current_Figure = value;
-				OnPropertyChanged(nameof(Current_Figure));
+				_currentFigure = value;
+				OnPropertyChanged();
 			}
 		}
-		private ICommand _window_ContentRenderedCommand;
-		public ICommand Window_ContentRenderedCommand => _window_ContentRenderedCommand ??= new RelayCommand(f =>
+		private ICommand _windowContentRenderedCommand;
+		public ICommand WindowContentRenderedCommand => _windowContentRenderedCommand = new RelayCommand(f =>
 		{
-			Current_Figure = Figure.GetObj(path);
+			CurrentFigure = Figure.GetObj(Path);
 		});
 
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		public event PropertyChangedEventHandler? PropertyChanged;
+		protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
 		{
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}

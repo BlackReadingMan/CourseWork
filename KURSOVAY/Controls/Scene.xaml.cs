@@ -1,14 +1,14 @@
-﻿using KURSOVAY.Algorithm;
-using KURSOVAY.CustomDataTypes;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using CourseWork.Algorithm;
+using CourseWork.CustomDataTypes;
 
-namespace KURSOVAY.Controls
+namespace CourseWork.Controls
 {
 	/// <summary>
 	/// Логика взаимодействия для Scene.xaml
@@ -19,20 +19,20 @@ namespace KURSOVAY.Controls
 		private readonly Vector3 _forward = new(0f, 0f, -1f);
 		private readonly Vector3 _up = new(0f, 1f, 0f);
 
-		private readonly Vector3 _radius_PHI_THETA = new(7f, 0.0f, 0.5f);
+		private readonly Vector3 _radiusPhiTheta = new(7f, 0.0f, 0.5f);
 		private readonly Vector3 _cameraTarget = new(0f, 0f, 0f);
 
 		private readonly Vector3 _cameraUpVector = new(0f, 1f, 0f);
-		private readonly float _spectator_step = 0.025f;
+		private const float SpectatorStep = 0.025f;
 
-		private readonly float _fieldOfView = 1f;
-		private readonly float _nearPlaneDistance = 90f;
-		private readonly float _farPlaneDistance = 100f;
+		private const float FieldOfView = 1f;
+		private const float NearPlaneDistance = 90f;
+		private const float FarPlaneDistance = 100f;
 
-		private readonly float _x = 0f;
-		private readonly float _y = 0f;
-		private readonly float _minDepth = -56;
-		private readonly float _maxDepth = 56;
+		private const float X0 = 0f;
+		private const float Y0 = 0f;
+		private const float MinDepth = -56;
+		private const float MaxDepth = 56;
 
 		private Vector3 _lightPosition;
 		private readonly Vector3 _lightColor = new(1f, 1f, 1f);
@@ -43,11 +43,11 @@ namespace KURSOVAY.Controls
 		private Matrix4x4 _projection;
 		private Matrix4x4 _viewport;
 		private Matrix4x4 _final;
-		private Queue<Thread> _threads = [];
-		private Queue<Polygon> _polygons = [];
-		private Dictionary<Tuple<int, int>, Tuple<double, Color>> _zbuffer;
-		private WriteableBitmap _image;
-		private Stopwatch sw = new Stopwatch();
+		private readonly Queue<Thread> _threads = [];
+		private readonly Queue<Polygon> _polygons = [];
+		private Dictionary<Tuple<int, int>, Tuple<double, Color>> _zBuffer = [];
+		private WriteableBitmap? _image;
+		private readonly Stopwatch _stopwatch = new ();
 		public Scene()
 		{
 			InitializeComponent();
@@ -56,7 +56,7 @@ namespace KURSOVAY.Controls
 		private Vector3 _cameraSpherePosition;
 		private Vector3 CameraSpherePosition
 		{
-			get { return _cameraSpherePosition; }
+			get => _cameraSpherePosition;
 			set
 			{
 				_cameraPosition = _position + new Vector3(
@@ -70,20 +70,20 @@ namespace KURSOVAY.Controls
 		}
 		private void DataUpdate()
 		{
-			_zbuffer = [];
+			_zBuffer = [];
 			_image = new WriteableBitmap((int)ActualWidth, (int)ActualHeight, 96, 96, PixelFormats.Bgra32, null);
-			_world = Matrix4x4.CreateWorld(_position, _forward, _up);
-			_projection = Matrix4x4.CreatePerspectiveFieldOfView(_fieldOfView, (float)(ActualWidth / ActualHeight), _nearPlaneDistance, _farPlaneDistance);
-			_viewport = Matrix4x4.CreateViewport(_x, _y, (float)ActualWidth, (float)ActualHeight, _minDepth, _maxDepth);
-			_view = Matrix4x4.CreateLookAt(_cameraPosition, _cameraTarget, _cameraUpVector);
+			_world = Matrix4X4Extension.CreateWorld(_position, _forward, _up);
+			_view = Matrix4X4Extension.CreateLookAt(_cameraPosition, _cameraTarget, _cameraUpVector);
+			_projection = Matrix4X4Extension.CreatePerspectiveFieldOfView(FieldOfView, (float)(ActualWidth / ActualHeight), NearPlaneDistance, FarPlaneDistance);
+			_viewport = Matrix4X4Extension.CreateViewport(X0, Y0, (float)ActualWidth, (float)ActualHeight, MinDepth, MaxDepth);
 			_final = _world * _view * _projection * _viewport;
-			sw.Reset();
+			_stopwatch.Reset();
 		}
 		private void RenderPoints()
 		{
 			foreach (var triangle in PaintedFigures.F)
 			{
-				Vector3 PolygonPos = new Vector3(
+				var polygonPos = new Vector3(
 					(PaintedFigures.V[triangle.Item1.Item1 - 1].X + PaintedFigures.V[triangle.Item2.Item1 - 1].X + PaintedFigures.V[triangle.Item3.Item1 - 1].X) / 3f,
 					(PaintedFigures.V[triangle.Item1.Item1 - 1].Y + PaintedFigures.V[triangle.Item2.Item1 - 1].Y + PaintedFigures.V[triangle.Item3.Item1 - 1].Y) / 3f,
 					(PaintedFigures.V[triangle.Item1.Item1 - 1].Z + PaintedFigures.V[triangle.Item2.Item1 - 1].Z + PaintedFigures.V[triangle.Item3.Item1 - 1].Z) / 3f);
@@ -91,7 +91,7 @@ namespace KURSOVAY.Controls
 					Algorithms.VectorMatrixMultiplication(PaintedFigures.V[triangle.Item1.Item1 - 1], _final),
 					Algorithms.VectorMatrixMultiplication(PaintedFigures.V[triangle.Item2.Item1 - 1], _final),
 					Algorithms.VectorMatrixMultiplication(PaintedFigures.V[triangle.Item3.Item1 - 1], _final),
-					Algorithms.GetColor(PaintedFigures.VN[triangle.Item1.Item3 - 1], PolygonPos, _lightPosition, _lightColor, _objectColor)));
+					Algorithms.GetColor(PaintedFigures.Vn[triangle.Item1.Item3 - 1], polygonPos, _lightPosition, _lightColor, _objectColor)));
 				_threads.Enqueue(new Thread(_polygons.Last().MakeFill));
 				_threads.Last().Start();
 			}
@@ -100,133 +100,132 @@ namespace KURSOVAY.Controls
 		{
 			while (_threads.Count != 0)
 			{
-				if (_threads.Count != 0 && _threads.First().ThreadState == System.Threading.ThreadState.Stopped)
+				if (_threads.First().ThreadState == System.Threading.ThreadState.Stopped)
 				{
-					foreach (var pixel in _polygons.First().buffer)
+					foreach (var pixel in _polygons.First().Buffer)
 					{
 						Tuple<int, int> key = new(pixel.Key.Item1, pixel.Key.Item2);
-						if (_zbuffer.TryGetValue(key, out Tuple<double, Color>? value))
+						if (_zBuffer.TryGetValue(key, out var value))
 						{
 							if (value.Item1 <= pixel.Value.Item1)
-								_zbuffer[key] = pixel.Value;
+								_zBuffer[key] = pixel.Value;
 						}
 						if (value == null)
-							_zbuffer.Add(pixel.Key, pixel.Value);
+							_zBuffer.Add(pixel.Key, pixel.Value);
 					}
 					_threads.Dequeue();
 					_polygons.Dequeue();
 				}
 			}
 		}
-		private void MakeOXYZ()
+		private void BuildCoordinateAxes()
 		{
-			Vector4 vectorO = Algorithms.VectorMatrixMultiplication(new Vector4(0, 0, 0, 1), _final);
-			Vector4 vectorX = Algorithms.VectorMatrixMultiplication(new Vector4(5, 0, 0, 1), _final);
-			Vector4 vectorY = Algorithms.VectorMatrixMultiplication(new Vector4(0, 5, 0, 1), _final);
-			Vector4 vectorZ = Algorithms.VectorMatrixMultiplication(new Vector4(0, 0, 5, 1), _final);
-			foreach (var item in Algorithms.CDA(new Point(vectorO.X, vectorO.Y), new Point(vectorX.X, vectorX.Y)))
+			var vectorO = Algorithms.VectorMatrixMultiplication(new Vector4(0, 0, 0, 1), _final);
+			var vectorX = Algorithms.VectorMatrixMultiplication(new Vector4(5, 0, 0, 1), _final);
+			var vectorY = Algorithms.VectorMatrixMultiplication(new Vector4(0, 5, 0, 1), _final);
+			var vectorZ = Algorithms.VectorMatrixMultiplication(new Vector4(0, 0, 5, 1), _final);
+			foreach (var key in Algorithms.Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorX.X, vectorX.Y)).Select(item => new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero), (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
-				var key = new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero), (int)Math.Round(item.Y, MidpointRounding.AwayFromZero));
-
-				if (_zbuffer.ContainsKey(key))
+				if (_zBuffer.ContainsKey(key))
 				{
-					_zbuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(255, 0, 0));
+					_zBuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(255, 0, 0));
 				}
 				else
 				{
-					_zbuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(255, 0, 0)));
+					_zBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(255, 0, 0)));
 				}
 			}
-			foreach (var item in Algorithms.CDA(new Point(vectorO.X, vectorO.Y), new Point(vectorY.X, vectorY.Y)))
+			foreach (var key in Algorithms.Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorY.X, vectorY.Y)).Select(item => new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero), (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
-				var key = new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero), (int)Math.Round(item.Y, MidpointRounding.AwayFromZero));
-
-				if (_zbuffer.ContainsKey(key))
+				if (_zBuffer.ContainsKey(key))
 				{
-					_zbuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(0, 255, 0));
+					_zBuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(0, 255, 0));
 				}
 				else
 				{
-					_zbuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(0, 255, 0)));
+					_zBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(0, 255, 0)));
 				}
 			}
-			foreach (var item in Algorithms.CDA(new Point(vectorO.X, vectorO.Y), new Point(vectorZ.X, vectorZ.Y)))
+			foreach (var key in Algorithms.Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorZ.X, vectorZ.Y)).Select(item => new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero), (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
-				var key = new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero), (int)Math.Round(item.Y, MidpointRounding.AwayFromZero));
-
-				if (_zbuffer.ContainsKey(key))
+				if (_zBuffer.ContainsKey(key))
 				{
-					_zbuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(0, 0, 255));
+					_zBuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(0, 0, 255));
 				}
 				else
 				{
-					_zbuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(0, 0, 255)));
+					_zBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(0, 0, 255)));
 				}
 			}
 		}
 		private void MakeImage()
 		{
-			foreach (var pixel in _zbuffer.Where(x => x.Key.Item1 < ActualWidth && x.Key.Item1 >= 0 && x.Key.Item2 < ActualHeight && x.Key.Item2 >= 0))
+			foreach (var pixel in _zBuffer.Where(x => x.Key.Item1 < ActualWidth && x.Key.Item1 >= 0 && x.Key.Item2 < ActualHeight && x.Key.Item2 >= 0))
 			{
-				_image.WritePixels(new Int32Rect(pixel.Key.Item1, pixel.Key.Item2, 1, 1),
+				_image?.WritePixels(new Int32Rect(pixel.Key.Item1, pixel.Key.Item2, 1, 1),
 					new byte[] { pixel.Value.Item2.B, pixel.Value.Item2.G, pixel.Value.Item2.R, 255 }, 4, 0);
 			}
 		}
-		private void DataToUI()
+		private void DataToUi()
 		{
-			RenderTimer.Content = sw.ToString();
+			RenderTimer.Content = _stopwatch.ToString();
 			Picture.Source = _image;
 		}
 		private void PictureUpdate()
 		{
 			DataUpdate();
-			sw.Start();
+			_stopwatch.Start();
 			RenderPoints();
 			MakeZBuffer();
-			MakeOXYZ();
+			BuildCoordinateAxes();
 			MakeImage();
-			sw.Stop();
-			DataToUI();
+			_stopwatch.Stop();
+			DataToUi();
 		}
 		private static readonly DependencyProperty PaintedFiguresProperty = DependencyProperty.Register(nameof(PaintedFigures), typeof(Figure), typeof(Scene));
 		public Figure PaintedFigures
 		{
-			get { return (Figure)GetValue(PaintedFiguresProperty); }
-			set
-			{
-				SetValue(PaintedFiguresProperty, value);
-			}
+			get => (Figure)GetValue(PaintedFiguresProperty);
+			set => SetValue(PaintedFiguresProperty, value);
 		}
 		private void Win_KeyDown(object sender, KeyEventArgs e)
 		{
-			switch (e.Key)
+			switch (e)
 			{
-				case Key.Up:
-					CameraSpherePosition += new Vector3(0f, 0f, -_spectator_step);
+				case { Key: Key.Up }:
+					CameraSpherePosition += new Vector3(0f, 0f, -SpectatorStep);
 					PictureUpdate();
 					break;
-				case Key.Down:
-					CameraSpherePosition += new Vector3(0f, 0f, _spectator_step);
+				case { Key: Key.Down }:
+					CameraSpherePosition += new Vector3(0f, 0f, SpectatorStep);
 					PictureUpdate();
 					break;
-				case Key.Left:
-					CameraSpherePosition += new Vector3(0f, -_spectator_step, 0f);
+				case { Key: Key.Left }:
+					CameraSpherePosition += new Vector3(0f, -SpectatorStep, 0f);
 					PictureUpdate();
 					break;
-				case Key.Right:
-					CameraSpherePosition += new Vector3(0f, _spectator_step, 0f);
+				case { Key: Key.Right }:
+					CameraSpherePosition += new Vector3(0f, SpectatorStep, 0f);
 					PictureUpdate();
 					break;
-				case Key.Add:
+				case { Key: Key.Add }:
 					CameraSpherePosition += new Vector3(-1f, 0f, 0f);
 					PictureUpdate();
 					break;
-				case Key.Subtract:
+				case { Key: Key.Subtract }:
 					CameraSpherePosition += new Vector3(1f, 0f, 0f);
 					PictureUpdate();
 					break;
-				case Key.Enter:
-					CameraSpherePosition = _radius_PHI_THETA;
+				case { Key: Key.OemPlus }:
+					CameraSpherePosition += new Vector3(-1f, 0f, 0f);
+					PictureUpdate();
+					break;
+				case { Key: Key.OemMinus }:
+					CameraSpherePosition += new Vector3(1f, 0f, 0f);
+					PictureUpdate();
+					break;
+				case { Key: Key.Enter }:
+					CameraSpherePosition = _radiusPhiTheta;
 					PictureUpdate();
 					break;
 			}

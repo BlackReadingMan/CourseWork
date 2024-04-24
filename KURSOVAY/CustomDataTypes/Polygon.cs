@@ -1,52 +1,38 @@
-﻿using KURSOVAY.Algorithm;
-using System.Numerics;
+﻿using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
+using CourseWork.Algorithm;
 
-namespace KURSOVAY.CustomDataTypes
+namespace CourseWork.CustomDataTypes
 {
-	internal class Polygon
+	internal class Polygon(in Vector4 point1, in Vector4 point2, in Vector4 point3, in Color color)
 	{
-		private Vector4 point1;
-		private Vector4 point2;
-		private Vector4 point3;
-		private Color color;
-		public Polygon(in Vector4 _point1, in Vector4 _point2, in Vector4 _point3, in Color _color)
-		{
-			point1 = _point1;
-			point2 = _point2;
-			point3 = _point3;
-			color = _color;
-		}
+		private readonly Vector4 _point1 = point1;
+		private readonly Vector4 _point2 = point2;
+		private readonly Vector4 _point3 = point3;
+		private readonly Color _color = color;
+
 		public void MakeFill()
 		{
 			Dictionary<int, Tuple<Point, Point>> cheats = [];
-			Algorithms.CDA(point1, point2, ref cheats);
-			Algorithms.CDA(point2, point3, ref cheats);
-			Algorithms.CDA(point3, point1, ref cheats);
+			Algorithms.Cda(_point1, _point2, ref cheats);
+			Algorithms.Cda(_point2, _point3, ref cheats);
+			Algorithms.Cda(_point3, _point1, ref cheats);
 			foreach (var lines in cheats)
 			{
-				foreach (var item in Algorithms.CDA(lines.Value.Item1, lines.Value.Item2))
+				foreach (var item in Algorithms.Cda(lines.Value.Item1, lines.Value.Item2))
 				{
 					Tuple<int, int> key = new((int)Math.Round(item.X, MidpointRounding.ToZero), lines.Key);
-					if (buffer.TryGetValue(key, out Tuple<double, Color>? value))
+					if (Buffer.TryGetValue(key, out var value))
 					{
 						if (value.Item1 <= item.Y)
-							buffer[key] = new Tuple<double, Color>(item.Y, color);
+							Buffer[key] = new Tuple<double, Color>(item.Y, _color);
 					}
 					if (value == null)
-						buffer.Add(key, new Tuple<double, Color>(item.Y, color));
+						Buffer.Add(key, new Tuple<double, Color>(item.Y, _color));
 				}
 			}
 		}
-		private Dictionary<Tuple<int, int>, Tuple<double, Color>> _buffer = [];
-		public Dictionary<Tuple<int, int>, Tuple<double, Color>> buffer
-		{
-			get { return _buffer; }
-			set
-			{
-				_buffer = value;
-			}
-		}
+		public Dictionary<Tuple<int, int>, Tuple<double, Color>> Buffer { get; set; } = [];
 	}
 }
