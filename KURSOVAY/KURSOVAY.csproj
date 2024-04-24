@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Input.obj" />
+    <EmbeddedResource Include="Objects\Input.obj" />
   </ItemGroup>
 
   <ItemGroup>
