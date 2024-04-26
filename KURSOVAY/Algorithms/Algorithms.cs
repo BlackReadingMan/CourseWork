@@ -64,7 +64,7 @@ namespace CourseWork.Algorithms
 		public static Color GetColor(in Vector3 normal, in Vector3 fragmentPosition, in Vector3 lightPosition,
 			in Vector3 lightColor, in Vector3 objectColor)
 		{
-			const float ambientStrength = 0f;
+			const float ambientStrength = 0.1f;
 			var ambient = ambientStrength * lightColor;
 
 			var norm = Vector3.Normalize(normal);
@@ -72,7 +72,7 @@ namespace CourseWork.Algorithms
 			var diff = Math.Max(Vector3.Dot(norm, lightDir), 0.0f);
 			var diffuse = diff * lightColor;
 
-			const float specularStrength = 0f;
+			const float specularStrength = 0.5f;
 			var viewDir = Vector3.Normalize(lightPosition - fragmentPosition);
 			var reflectDir = Vector3.Reflect(-lightDir, norm);
 			var spec = (float)Math.Pow(Math.Max(Vector3.Dot(viewDir, reflectDir), 0.0f), 32f);

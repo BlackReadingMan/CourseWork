@@ -32,7 +32,7 @@ namespace CourseWork.Controls
 		private const float MinDepth = -100;
 		private const float MaxDepth = 100;
 
-		private Vector3 _lightPosition = new(-4f, 0f, 11f);
+		private Vector3 _lightPosition;
 		private readonly Vector3 _lightColor = new(1f, 1f, 1f);
 		private readonly Vector3 _objectColor = new(1.0f, 0.5f, 0.31f);
 
@@ -88,13 +88,6 @@ namespace CourseWork.Controls
 		{
 			foreach (var triangle in PaintedFigures.F)
 			{
-				var polygonPos = new Vector3(
-					(PaintedFigures.V[triangle.Item1.Item1 - 1].X + PaintedFigures.V[triangle.Item2.Item1 - 1].X +
-					 PaintedFigures.V[triangle.Item3.Item1 - 1].X) / 3f,
-					(PaintedFigures.V[triangle.Item1.Item1 - 1].Y + PaintedFigures.V[triangle.Item2.Item1 - 1].Y +
-					 PaintedFigures.V[triangle.Item3.Item1 - 1].Y) / 3f,
-					(PaintedFigures.V[triangle.Item1.Item1 - 1].Z + PaintedFigures.V[triangle.Item2.Item1 - 1].Z +
-					 PaintedFigures.V[triangle.Item3.Item1 - 1].Z) / 3f);
 				_polygons.Enqueue(new Polygon(
 					Matrix4X4Extension.VectorMatrixMultiplication(
 						PaintedFigures.V[triangle.Item1.Item1 - 1],
@@ -105,13 +98,14 @@ namespace CourseWork.Controls
 					Matrix4X4Extension.VectorMatrixMultiplication(
 						PaintedFigures.V[triangle.Item3.Item1 - 1],
 						_final),
-					Algorithms.Algorithms.GetColor(Vector3.Normalize(
-							Matrix4X4Extension.VectorMatrixMultiplication(
-								PaintedFigures.Vn[triangle.Item1.Item3 - 1],
-								Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
-									_forward, _up))), polygonPos, _lightPosition,
-						_lightColor,
-						_objectColor)));
+					Vector3.Normalize(
+						Matrix4X4Extension.VectorMatrixMultiplication(
+							PaintedFigures.Vn[triangle.Item1.Item3 - 1],
+							Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
+								_forward, _up))),
+					_lightPosition,
+					_lightColor,
+					_objectColor));
 				_threads.Enqueue(new Thread(_polygons.Last().MakeFill));
 				_threads.Last().Start();
 			}
