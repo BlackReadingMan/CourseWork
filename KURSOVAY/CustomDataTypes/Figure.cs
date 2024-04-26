@@ -6,7 +6,7 @@ namespace CourseWork.CustomDataTypes
 {
 	public struct Figure()
 	{
-		public List<Vector4> V = [];
+		public List<Vector3> V = [];
 		public List<Vector3> Vn = [];
 		public List<Tuple<Tuple<int, int, int>, Tuple<int, int, int>, Tuple<int, int, int>>> F = [];
 		public static Figure GetObj(string path)
@@ -22,7 +22,7 @@ namespace CourseWork.CustomDataTypes
 							.Skip(1)
 							.Select(x => Convert.ToDouble(x.Replace('.', ',')))
 							.ToArray();
-						figures.V.Add(new Vector4((float)v[0], (float)v[1], (float)v[2], 1));
+						figures.V.Add(new Vector3((float)v[0], (float)v[1], (float)v[2]));
 						break;
 					case "vn":
 						var vn = line.Split(' ')

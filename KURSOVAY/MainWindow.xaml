@@ -8,7 +8,7 @@
         xmlns:ct="clr-namespace:CourseWork.Controls"
         xmlns:local="clr-namespace:CourseWork"
         mc:Ignorable="d"
-        Title="КУРСОВАЯ" Height="450" Width="800" WindowState="Maximized" Background="Green"
+        Title="КУРСОВАЯ" Height="450" Width="800" WindowState="Maximized"
         >
     <Window.DataContext>
         <vm:MainWindowViewModel/>

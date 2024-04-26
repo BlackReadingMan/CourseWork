@@ -4,11 +4,11 @@ using System.Windows.Media;
 
 namespace CourseWork.CustomDataTypes
 {
-	internal class Polygon(in Vector4 point1, in Vector4 point2, in Vector4 point3, in Color color)
+	internal class Polygon(in Vector3 point1, in Vector3 point2, in Vector3 point3, in Color color)
 	{
-		private readonly Vector4 _point1 = point1;
-		private readonly Vector4 _point2 = point2;
-		private readonly Vector4 _point3 = point3;
+		private readonly Vector3 _point1 = point1;
+		private readonly Vector3 _point2 = point2;
+		private readonly Vector3 _point3 = point3;
 		private readonly Color _color = color;
 
 		public void MakeFill()

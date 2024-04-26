@@ -6,7 +6,7 @@ namespace CourseWork.Algorithms
 {
 	internal static class Algorithms
 	{
-		public static void Cda(in Vector4 point1, in Vector4 point2, ref Dictionary<int, Tuple<Point, Point>> lines)
+		public static void Cda(in Vector3 point1, in Vector3 point2, ref Dictionary<int, Tuple<Point, Point>> lines)
 		{
 			double dx = point2.X - point1.X;
 			double dy = point2.Y - point1.Y;
@@ -24,11 +24,10 @@ namespace CourseWork.Algorithms
 			for (var i = 0; i < step; i++)
 			{
 				var key = (int)Math.Round(y, MidpointRounding.ToZero);
-				if (lines.TryGetValue(key, out Tuple<Point, Point>? check))
+				if (lines.TryGetValue(key, out var check))
 					if (x < check.Item1.X)
 						lines[key] = new Tuple<Point, Point>(new Point(x, z), check.Item2);
-					else
-						if (x > check.Item2.X)
+					else if (x > check.Item2.X)
 						lines[key] = new Tuple<Point, Point>(check.Item1, new Point(x, z));
 				if (check == null)
 					lines.Add(key, new Tuple<Point, Point>(new Point(x, z), new Point(x, z)));
@@ -37,6 +36,7 @@ namespace CourseWork.Algorithms
 				z += zIncr;
 			}
 		}
+
 		public static List<Point> Cda(in Point point1, in Point point2)
 		{
 			List<Point> points = [];
@@ -57,34 +57,29 @@ namespace CourseWork.Algorithms
 				x += xIncr;
 				y += yIncr;
 			}
+
 			return points;
 		}
-		public static Color GetColor(in Vector3 normal, in Vector3 fragmentPosition, in Vector3 lightPosition, in Vector3 lightColor, in Vector3 objectColor)
+
+		public static Color GetColor(in Vector3 normal, in Vector3 fragmentPosition, in Vector3 lightPosition,
+			in Vector3 lightColor, in Vector3 objectColor)
 		{
-			const float ambientStrength = 1f;
+			const float ambientStrength = 0f;
 			var ambient = ambientStrength * lightColor;
 
+			var norm = Vector3.Normalize(normal);
 			var lightDir = Vector3.Normalize(lightPosition - fragmentPosition);
-			var diff = Math.Max(Vector3.Dot(normal, lightDir), 0.0f);
+			var diff = Math.Max(Vector3.Dot(norm, lightDir), 0.0f);
 			var diffuse = diff * lightColor;
 
-			var result = (ambient + diffuse) * objectColor;
-			return Color.FromRgb((byte)(result.X * 255f), (byte)(result.Y * 255f), (byte)(result.Z * 255f));
-		}
-		public static Vector4 VectorMatrixMultiplication(in Vector4 vector, in Matrix4x4 inputMatrix)
-		{
-			Vector4 result = new();
-			for (var i = 0; i < 4; i++)
-			{
-				result[i] = 0;
+			const float specularStrength = 0f;
+			var viewDir = Vector3.Normalize(lightPosition - fragmentPosition);
+			var reflectDir = Vector3.Reflect(-lightDir, norm);
+			var spec = (float)Math.Pow(Math.Max(Vector3.Dot(viewDir, reflectDir), 0.0f), 32f);
+			var specular = specularStrength * spec * lightColor;
 
-				for (var k = 0; k < 4; k++)
-				{
-					result[i] += inputMatrix[k, i] * vector[k];
-				}
-			}
-			result /= result.W;
-			return result;
+			var result = (ambient + diffuse + specular) * objectColor;
+			return Color.FromRgb((byte)(result.X * 255f), (byte)(result.Y * 255f), (byte)(result.Z * 255f));
 		}
 	}
 }

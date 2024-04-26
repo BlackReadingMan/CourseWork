@@ -13,10 +13,10 @@ namespace CourseWork.CustomDataTypes
 			var result = new Matrix4x4();
 			for (var i = 0; i < 3; i++)
 			{
-				result[i, 0] = axisX[i];
-				result[i, 1] = axisY[i];
-				result[i, 2] = axisZ[i];
-				result[i, 3] = position[i];
+				result[0, i] = axisX[i];
+				result[1, i] = axisY[i];
+				result[2, i] = axisZ[i];
+				result[3, i] = position[i];
 			}
 
 			result[3, 3] = 1;
@@ -66,6 +66,23 @@ namespace CourseWork.CustomDataTypes
 				0f, -0.5f * height, 0f, 0f,
 				0f, 0f, minDepth - maxDepth, 0f,
 				0.5f * width + x, 0.5f * height + y, minDepth, 1f);
+		}
+
+		public static Vector3 VectorMatrixMultiplication(in Vector3 vector, in Matrix4x4 inputMatrix)
+		{
+			Vector4 newVector = new(vector, 1);
+			Vector4 result = new();
+			for (var i = 0; i < 4; i++)
+			{
+				for (var k = 0; k < 4; k++)
+				{
+					result[i] += inputMatrix[k, i] * newVector[k];
+				}
+			}
+
+			if (result.W != 0)
+				result /= result.W;
+			return new Vector3(result.X, result.Y, result.Z);
 		}
 	}
 }
