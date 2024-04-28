@@ -4,15 +4,12 @@ using System.Windows.Media;
 
 namespace CourseWork.CustomDataTypes
 {
-	internal class Polygon(in Vector3 point1, in Vector3 point2, in Vector3 point3, in Vector3 normal, in Vector3 lightPosition, in Vector3 lightColor,in Vector3 objectColor)
+	internal class Polygon(in Vector3 point1, in Vector3 point2, in Vector3 point3, in Vector3 normal)
 	{
 		private readonly Vector3 _point1 = point1;
 		private readonly Vector3 _point2 = point2;
 		private readonly Vector3 _point3 = point3;
-		private readonly Vector3 _normal = normal;
-		private readonly Vector3 _lightPosition = lightPosition;
-		private readonly Vector3 _lightColor = lightColor;
-		private readonly Vector3 _objectColor = objectColor;
+		public Vector3 Normal { get; set; } = normal;
 
 		public void MakeFill()
 		{
@@ -27,14 +24,15 @@ namespace CourseWork.CustomDataTypes
 					Tuple<int, int> key = new((int)Math.Round(item.X, MidpointRounding.ToZero), lines.Key);
 					if (Buffer.TryGetValue(key, out var value))
 					{
-						if (value.Item1 <= item.Y)
-							Buffer[key] = new Tuple<double, Color>(item.Y, Algorithms.Algorithms.GetColor(_normal,new Vector3(key.Item1,key.Item2, (float)item.Y),_lightPosition,_lightColor,_objectColor));
+						if (value <= item.Y)
+							Buffer[key] = item.Y;
 					}
-					if (value == null)
-						Buffer.Add(key, new Tuple<double, Color>(item.Y, Algorithms.Algorithms.GetColor(_normal, new Vector3(key.Item1, key.Item2, (float)item.Y), _lightPosition, _lightColor, _objectColor)));
+					else 
+						Buffer.Add(key, item.Y);
 				}
 			}
 		}
-		public Dictionary<Tuple<int, int>, Tuple<double, Color>> Buffer { get; set; } = [];
+
+		public Dictionary<Tuple<int, int>, double> Buffer { get; set; } = [];
 	}
 }

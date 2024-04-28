@@ -17,7 +17,7 @@ namespace CourseWork.Controls
 		private readonly Vector3 _forward = new(0f, 0f, -1f);
 		private readonly Vector3 _up = new(0f, 1f, 0f);
 
-		private readonly Vector3 _radiusPhiTheta = new(7f, 0f, 0.5f);
+		private readonly Vector3 _radiusPhiTheta = new(8f, -0.1f, 0.5f);
 		private readonly Vector3 _cameraTarget = new(0f, 0f, 0f);
 
 		private readonly Vector3 _cameraUpVector = new(0f, 1f, 0f);
@@ -32,7 +32,7 @@ namespace CourseWork.Controls
 		private const float MinDepth = -100;
 		private const float MaxDepth = 100;
 
-		private Vector3 _lightPosition;
+		private readonly Vector3 _lightPosition = new(750f + -500f, 600f + 0f, 750 + 2000f);
 		private readonly Vector3 _lightColor = new(1f, 1f, 1f);
 		private readonly Vector3 _objectColor = new(1.0f, 0.5f, 0.31f);
 
@@ -66,7 +66,6 @@ namespace CourseWork.Controls
 					(float)(value.X * Math.Cos(value.Y * 2 * Math.PI) * Math.Sin(value.Z * Math.PI))
 				);
 				_cameraSpherePosition = value;
-				_lightPosition = _cameraPosition;
 			}
 		}
 
@@ -102,10 +101,7 @@ namespace CourseWork.Controls
 						Matrix4X4Extension.VectorMatrixMultiplication(
 							PaintedFigures.Vn[triangle.Item1.Item3 - 1],
 							Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
-								_forward, _up))),
-					_lightPosition,
-					_lightColor,
-					_objectColor));
+								_forward, _up)))));
 				_threads.Enqueue(new Thread(_polygons.Last().MakeFill));
 				_threads.Last().Start();
 			}
@@ -121,12 +117,18 @@ namespace CourseWork.Controls
 					Tuple<int, int> key = new(pixel.Key.Item1, pixel.Key.Item2);
 					if (_zBuffer.TryGetValue(key, out var value))
 					{
-						if (value.Item1 <= pixel.Value.Item1)
-							_zBuffer[key] = pixel.Value;
+						if (value.Item1 <= pixel.Value)
+							_zBuffer[key] = new Tuple<double, Color>(pixel.Value,
+								Algorithms.Algorithms.GetColor(_polygons.First().Normal,
+									new Vector3(pixel.Key.Item1, pixel.Key.Item2, (float)pixel.Value), _lightPosition,
+									_lightColor, _objectColor));
 					}
 
 					if (value == null)
-						_zBuffer.Add(pixel.Key, pixel.Value);
+						_zBuffer.Add(pixel.Key, new Tuple<double, Color>(pixel.Value,
+							Algorithms.Algorithms.GetColor(_polygons.First().Normal,
+								new Vector3(pixel.Key.Item1, pixel.Key.Item2, (float)pixel.Value), _lightPosition,
+								_lightColor, _objectColor)));
 				}
 
 				_threads.Dequeue();
@@ -137,16 +139,16 @@ namespace CourseWork.Controls
 		private void BuildCoordinateAxes()
 		{
 			var newFinal = Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
-							   new Vector3(0, 0, -1), new Vector3(0, 1, 0)) * _view * _projection *
-						   _viewport;
+				               new Vector3(0, 0, -1), new Vector3(0, 1, 0)) * _view * _projection *
+			               _viewport;
 			var vectorO = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(0, 0, 0), newFinal);
 			var vectorX = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(5, 0, 0), newFinal);
 			var vectorY = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(0, 5, 0), newFinal);
 			var vectorZ = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(0, 0, 5), newFinal);
 			foreach (var key in Algorithms.Algorithms
-						 .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorX.X, vectorX.Y)).Select(item =>
-							 new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
-								 (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
+				         .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorX.X, vectorX.Y)).Select(item =>
+					         new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
+						         (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
 				if (_zBuffer.ContainsKey(key))
 				{
@@ -159,9 +161,9 @@ namespace CourseWork.Controls
 			}
 
 			foreach (var key in Algorithms.Algorithms
-						 .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorY.X, vectorY.Y)).Select(item =>
-							 new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
-								 (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
+				         .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorY.X, vectorY.Y)).Select(item =>
+					         new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
+						         (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
 				if (_zBuffer.ContainsKey(key))
 				{
@@ -174,9 +176,9 @@ namespace CourseWork.Controls
 			}
 
 			foreach (var key in Algorithms.Algorithms
-						 .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorZ.X, vectorZ.Y)).Select(item =>
-							 new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
-								 (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
+				         .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorZ.X, vectorZ.Y)).Select(item =>
+					         new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
+						         (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
 				if (_zBuffer.ContainsKey(key))
 				{
@@ -192,8 +194,8 @@ namespace CourseWork.Controls
 		private void MakeImage()
 		{
 			foreach (var pixel in _zBuffer.Where(x =>
-						 x.Key.Item1 < ActualWidth && x.Key.Item1 >= 0 && x.Key.Item2 < ActualHeight &&
-						 x.Key.Item2 >= 0))
+				         x.Key.Item1 < ActualWidth && x.Key.Item1 >= 0 && x.Key.Item2 < ActualHeight &&
+				         x.Key.Item2 >= 0))
 			{
 				_image?.WritePixels(new Int32Rect(pixel.Key.Item1, pixel.Key.Item2, 1, 1),
 					new byte[] { pixel.Value.Item2.B, pixel.Value.Item2.G, pixel.Value.Item2.R, 255 }, 4, 0);
@@ -206,7 +208,7 @@ namespace CourseWork.Controls
 			Picture.Source = _image;
 		}
 
-		private void PictureUpdate()
+		private void PictureUpdateAsync()
 		{
 			DataUpdate();
 			_stopwatch.Start();
@@ -233,39 +235,39 @@ namespace CourseWork.Controls
 			{
 				case { Key: Key.Up }:
 					CameraSpherePosition += new Vector3(0f, 0f, -SpectatorStep);
-					PictureUpdate();
+					PictureUpdateAsync();
 					break;
 				case { Key: Key.Down }:
 					CameraSpherePosition += new Vector3(0f, 0f, SpectatorStep);
-					PictureUpdate();
+					PictureUpdateAsync();
 					break;
 				case { Key: Key.Left }:
 					CameraSpherePosition += new Vector3(0f, -SpectatorStep, 0f);
-					PictureUpdate();
+					PictureUpdateAsync();
 					break;
 				case { Key: Key.Right }:
 					CameraSpherePosition += new Vector3(0f, SpectatorStep, 0f);
-					PictureUpdate();
+					PictureUpdateAsync();
 					break;
 				case { Key: Key.Add }:
 					CameraSpherePosition += new Vector3(-1f, 0f, 0f);
-					PictureUpdate();
+					PictureUpdateAsync();
 					break;
 				case { Key: Key.Subtract }:
 					CameraSpherePosition += new Vector3(1f, 0f, 0f);
-					PictureUpdate();
+					PictureUpdateAsync();
 					break;
 				case { Key: Key.OemPlus }:
 					CameraSpherePosition += new Vector3(-1f, 0f, 0f);
-					PictureUpdate();
+					PictureUpdateAsync();
 					break;
 				case { Key: Key.OemMinus }:
 					CameraSpherePosition += new Vector3(1f, 0f, 0f);
-					PictureUpdate();
+					PictureUpdateAsync();
 					break;
 				case { Key: Key.Enter }:
 					CameraSpherePosition = _radiusPhiTheta;
-					PictureUpdate();
+					PictureUpdateAsync();
 					break;
 			}
 		}
