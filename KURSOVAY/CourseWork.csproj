@@ -9,7 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Objects\Input.obj" />
+    <None Remove="InputData\Settings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="InputData\Input.obj" />
+    <EmbeddedResource Include="InputData\Settings.json" />
   </ItemGroup>
 
   <ItemGroup>

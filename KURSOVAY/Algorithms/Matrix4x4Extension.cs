@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace CourseWork.CustomDataTypes
+namespace CourseWork.Algorithms
 {
 	internal static class Matrix4X4Extension
 	{

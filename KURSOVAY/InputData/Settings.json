@@ -1,0 +1,20 @@
+{
+	"Position": [ 0.0, 0.0, 0.0 ],
+	"Forward": [ 0.0, 0.0, -1.0 ],
+	"Up": [ 0.0, 1.0, 0.0 ],
+	"RadiusPhiTheta": [ 8.0, -0.1, 0.5 ],
+	"CameraTarget": [ 0.0, 0.0, 0.0 ],
+	"CameraUpVector": [ 0.0, 1.0, 0.0 ],
+	"SpectatorStep": 0.025,
+	"FieldOfView": 1,
+	"NearPlaneDistance": 0.9,
+	"FarPlaneDistance": 1,
+	"X0": 0.0,
+	"Y0": 0.0,
+	"MinDepth": -100,
+	"MaxDepth": 100,
+	"LightPosition": [ 1250.0, 600.0, 2750.0 ],
+	"LightColor": [ 1.0, 1.0, 1.0 ],
+	"ObjectColor": [ 1.0, 0.5, 0.31 ],
+	"BackGroundColor": [ 0.0, 0.0, 0.0 ]
+}

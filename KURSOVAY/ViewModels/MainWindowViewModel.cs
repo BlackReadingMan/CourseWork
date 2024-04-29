@@ -1,30 +1,45 @@
 ﻿using CourseWork.CustomDataTypes;
-using CourseWork.Utilities;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Windows.Input;
 
 namespace CourseWork.ViewModels
 {
 	internal class MainWindowViewModel : INotifyPropertyChanged
 	{
-		private const string Path = "Input.obj";
+		private const string ObjPath = "Input.obj";
+		private const string SettingsPath = "Settings.json";
 
-		private Figure _currentFigure;
-		public Figure CurrentFigure
+		public MainWindowViewModel()
 		{
-			get => _currentFigure;
+			GetData();
+		}
+
+		private Obj _currentObj;
+		public Obj CurrentObj
+		{
+			get => _currentObj;
 			set
 			{
-				_currentFigure = value;
+				_currentObj = value;
 				OnPropertyChanged();
 			}
 		}
-		private ICommand _windowContentRenderedCommand;
-		public ICommand WindowContentRenderedCommand => _windowContentRenderedCommand = new RelayCommand(f =>
+		private Settings? _currentSettings;
+		public Settings? CurrentSettings
 		{
-			CurrentFigure = Figure.GetObj(Path);
-		});
+			get => _currentSettings;
+			set
+			{
+				_currentSettings = value;
+				OnPropertyChanged();
+			}
+		}
+
+		private async void GetData()
+		{
+			CurrentObj = await Obj.GetObjAsync(ObjPath);
+			CurrentSettings = await Settings.GetSettings(SettingsPath);
+		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;
 		protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
