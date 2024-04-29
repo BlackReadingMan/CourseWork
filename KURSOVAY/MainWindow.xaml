@@ -3,22 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:vm="clr-namespace:CourseWork.ViewModels"
         xmlns:ct="clr-namespace:CourseWork.Controls"
-        xmlns:local="clr-namespace:CourseWork"
         mc:Ignorable="d"
         Title="КУРСОВАЯ" Height="450" Width="800" WindowState="Maximized"
         >
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="ContentRendered">
-            <i:InvokeCommandAction Command="{Binding WindowContentRenderedCommand}"/>
-        </i:EventTrigger>
-    </i:Interaction.Triggers>
     <Grid>
-        <ct:Scene PaintedFigures="{Binding CurrentFigure, Mode=OneWay}" />
+        <ct:Scene PaintedObj="{Binding CurrentObj, Mode=OneWay}" Settings="{Binding CurrentSettings, Mode=OneWay}" />
     </Grid>
 </Window>
