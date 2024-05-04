@@ -23,6 +23,41 @@ namespace CourseWork.Algorithms
 			return result;
 		}
 
+		public static Matrix4x4 CreateModel(in Quaternion rotation, in float scale)
+		{
+			var xx = rotation.X * rotation.X;
+			var yy = rotation.Y * rotation.Y;
+			var zz = rotation.Z * rotation.Z;
+
+			var xy = rotation.X * rotation.Y;
+			var wz = rotation.Z * rotation.W;
+			var xz = rotation.Z * rotation.X;
+			var wy = rotation.Y * rotation.W;
+			var yz = rotation.Y * rotation.Z;
+			var wx = rotation.X * rotation.W;
+
+			var result = new Matrix4x4(
+				1.0f - 2.0f * (yy + zz),
+				2.0f * (xy + wz),
+				2.0f * (xz - wy),
+				0,
+
+				2.0f * (xy - wz),
+				1.0f - 2.0f * (zz + xx),
+				2.0f * (yz + wx),
+				0,
+
+				2.0f * (xz + wy),
+				2.0f * (yz - wx),
+				1.0f - 2.0f * (yy + xx),
+				0, 0, 0, 0, 1
+			);
+			return result * new Matrix4x4(scale, 0, 0, 0,
+				0, scale, 0, 0,
+				0, 0, scale, 0,
+				0, 0, 0, 1);
+		}
+
 		public static Matrix4x4 CreateLookAt(in Vector3 cameraPosition, in Vector3 cameraTarget,
 			in Vector3 cameraUpVector)
 		{

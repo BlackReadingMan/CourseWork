@@ -64,7 +64,41 @@ namespace CourseWork.CustomDataTypes
 				}
 			}
 		}
+		public Quaternion _rotation { get; private set; }
 
+		public float[] Rotation
+		{
+			get => [_rotation.X, _rotation.Y, _rotation.Z];
+			set
+			{
+				try
+				{
+					_rotation = new Quaternion(new Vector3(value),1);
+				}
+				catch
+				{
+					MessageBox.Show("Ошибка в настройке Rotation");
+					_isOk = false;
+				}
+			}
+		}
+		private float _scale;
+		public float Scale
+		{
+			get => _scale;
+			set
+			{
+				try
+				{
+					_scale = value;
+				}
+				catch
+				{
+					MessageBox.Show("Ошибка в настройке Scale");
+					_isOk = false;
+				}
+			}
+		}
 		public Vector3 _radiusPhiTheta { get; private set; }
 
 		public float[] RadiusPhiTheta

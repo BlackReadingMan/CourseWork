@@ -9,6 +9,7 @@ namespace CourseWork.CustomDataTypes
 	internal class Renderer
 	{
 		private Matrix4x4 _world;
+		private Matrix4x4 _model;
 		private Matrix4x4 _view;
 		private Matrix4x4 _projection;
 		private Matrix4x4 _viewport;
@@ -18,8 +19,8 @@ namespace CourseWork.CustomDataTypes
 		private readonly Stopwatch _stopwatch = new();
 		private Vector3 _cameraPosition;
 		private Vector3 _cameraSpherePosition;
-		public Obj? PaintedObj { private get; set; }
-		public Settings? Settings { private get; set; }
+		public Obj PaintedObj { private get; set; } = new();
+		public Settings Settings { private get; set; } = new();
 		public Dictionary<Tuple<int, int>, Tuple<double, Color>> ZBuffer { get; private set; } = [];
 		public string RenderTime { get; private set; } = "";
 		private Size Size { get; set; }
@@ -79,13 +80,15 @@ namespace CourseWork.CustomDataTypes
 			ZBuffer = [];
 			CameraTurn(cameraTurn);
 			_world = Matrix4X4Extension.CreateWorld(Settings._position, Settings._forward, Settings._up);
+			_model = Matrix4X4Extension.CreateModel(Settings._rotation, Settings.Scale);
 			_view = Matrix4X4Extension.CreateLookAt(_cameraPosition, Settings._cameraTarget, Settings._cameraUpVector);
 			_projection = Matrix4X4Extension.CreatePerspectiveFieldOfView(Settings.FieldOfView,
 				(float)(Size.Width / Size.Height), Settings.NearPlaneDistance, Settings.FarPlaneDistance);
+
 			_viewport = Matrix4X4Extension.CreateViewport(Settings.X0, Settings.Y0, (float)Size.Width,
 				(float)Size.Height, Settings.MinDepth,
 				Settings.MaxDepth);
-			_final = _world * _view * _projection * _viewport;
+			_final = _world * _model * _view * _projection * _viewport;
 			_stopwatch.Reset();
 		}
 
