@@ -77,7 +77,11 @@ namespace CourseWork.Algorithms
 			var spec = (float)Math.Pow(Math.Max(Vector3.Dot(viewDir, reflectDir), 0.0f), 32f);
 			var specular = specularStrength * spec * lightColor;
 
-			var result = (ambient + diffuse + specular) * objectColor;
+			var finalLight = ambient + diffuse + specular;
+			for(var i=0;i<3;i++)
+				if (finalLight[i] > 1f)
+					finalLight[i] = 1f;
+			var result = finalLight * objectColor;
 			return Color.FromRgb((byte)(result.X * 255f), (byte)(result.Y * 255f), (byte)(result.Z * 255f));
 		}
 	}

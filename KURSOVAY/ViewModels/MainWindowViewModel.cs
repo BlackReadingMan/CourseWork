@@ -14,8 +14,8 @@ namespace CourseWork.ViewModels
 			GetData();
 		}
 
-		private Obj _currentObj;
-		public Obj CurrentObj
+		private Obj? _currentObj;
+		public Obj? CurrentObj
 		{
 			get => _currentObj;
 			set
@@ -38,7 +38,7 @@ namespace CourseWork.ViewModels
 		private async void GetData()
 		{
 			CurrentObj = await Obj.GetObjAsync(ObjPath);
-			CurrentSettings = await Settings.GetSettings(SettingsPath);
+			CurrentSettings = await Settings.GetSettingsAsync(SettingsPath);
 		}
 
 		public event PropertyChangedEventHandler? PropertyChanged;

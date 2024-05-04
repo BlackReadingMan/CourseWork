@@ -2,7 +2,7 @@
 	"Position": [ 0.0, 0.0, 0.0 ],
 	"Forward": [ 0.0, 0.0, -1.0 ],
 	"Up": [ 0.0, 1.0, 0.0 ],
-	"RadiusPhiTheta": [ 8.0, -0.1, 0.5 ],
+	"RadiusPhiTheta": [ 8.0, 0.9, 0.4 ],
 	"CameraTarget": [ 0.0, 0.0, 0.0 ],
 	"CameraUpVector": [ 0.0, 1.0, 0.0 ],
 	"SpectatorStep": 0.025,
