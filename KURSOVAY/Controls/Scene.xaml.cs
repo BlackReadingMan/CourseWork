@@ -73,7 +73,7 @@ namespace CourseWork.Controls
 							 x.Key.Item1 < ActualWidth && x.Key.Item1 >= 0 && x.Key.Item2 < ActualHeight &&
 							 x.Key.Item2 >= 0))
 			{
-				image.WritePixels(new Int32Rect(pixel.Key.Item1, pixel.Key.Item2, 1, 1),
+				image.WritePixels(new Int32Rect(pixel.Key.Item1,pixel.Key.Item2, 1, 1),
 					new byte[] { pixel.Value.Item2.B, pixel.Value.Item2.G, pixel.Value.Item2.R, 255 }, 4, 0);
 			}
 			Picture.Source = image;

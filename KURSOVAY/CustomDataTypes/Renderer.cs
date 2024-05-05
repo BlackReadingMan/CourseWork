@@ -18,6 +18,7 @@ namespace CourseWork.CustomDataTypes
 		private readonly Queue<Polygon> _polygons = [];
 		private readonly Stopwatch _stopwatch = new();
 		private Vector3 _cameraPosition;
+		private Vector3 _lightPosition;
 		private Vector3 _cameraSpherePosition;
 		public Obj PaintedObj { private get; set; } = new();
 		public Settings Settings { private get; set; } = new();
@@ -51,17 +52,23 @@ namespace CourseWork.CustomDataTypes
 				}
 				_cameraSpherePosition = value;
 				CreateCameraWorldPosition();
+				CheckLightPosition();
+				
 			}
 		}
 
+		private void CheckLightPosition()
+		{
+			_lightPosition = Settings.LightFollowCamera ? _cameraPosition : Settings._lightPosition;
+		}
 		private void CreateCameraWorldPosition()
 		{
 			_cameraPosition = Settings._cameraTarget + new Vector3(
 				(float)(_cameraSpherePosition.X * Math.Sin(_cameraSpherePosition.Y * 2 * Math.PI) *
-				        Math.Sin(_cameraSpherePosition.Z * Math.PI)),
+						Math.Sin(_cameraSpherePosition.Z * Math.PI)),
 				(float)(_cameraSpherePosition.X * Math.Cos(_cameraSpherePosition.Z * Math.PI)),
 				(float)(_cameraSpherePosition.X * Math.Cos(_cameraSpherePosition.Y * 2 * Math.PI) *
-				        Math.Sin(_cameraSpherePosition.Z * Math.PI))
+						Math.Sin(_cameraSpherePosition.Z * Math.PI))
 			);
 		}
 
@@ -94,8 +101,15 @@ namespace CourseWork.CustomDataTypes
 
 		private void RenderPoints()
 		{
+			Matrix4x4 nullWorld = Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
+				Settings._forward, Settings._up);
+
 			foreach (var triangle in PaintedObj.F)
 			{
+				Vector3 newNormal = Vector3.Normalize(
+					Matrix4X4Extension.VectorMatrixMultiplication(
+						PaintedObj.Vn[triangle.Item1.Item3 - 1],
+						nullWorld * _model));
 				_polygons.Enqueue(new Polygon(
 					Matrix4X4Extension.VectorMatrixMultiplication(
 						PaintedObj.V[triangle.Item1.Item1 - 1],
@@ -106,11 +120,18 @@ namespace CourseWork.CustomDataTypes
 					Matrix4X4Extension.VectorMatrixMultiplication(
 						PaintedObj.V[triangle.Item3.Item1 - 1],
 						_final),
-					Vector3.Normalize(
-						Matrix4X4Extension.VectorMatrixMultiplication(
-							PaintedObj.Vn[triangle.Item1.Item3 - 1],
-							Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
-								Settings._forward, Settings._up)))));
+					Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item1.Item1 - 1],
+						_lightPosition,
+						Settings._lightColor, Settings._objectColor),
+				Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item2.Item1 - 1]
+						,
+						_lightPosition,
+						Settings._lightColor, Settings._objectColor),
+				Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item3.Item1 - 1]
+						,
+						_lightPosition,
+						Settings._lightColor, Settings._objectColor)
+					));
 				_threads.Enqueue(new Thread(_polygons.Last().MakeFill));
 				_threads.Last().Start();
 			}
@@ -126,22 +147,13 @@ namespace CourseWork.CustomDataTypes
 					Tuple<int, int> key = new(pixel.Key.Item1, pixel.Key.Item2);
 					if (ZBuffer.TryGetValue(key, out var value))
 					{
-						if (value.Item1 <= pixel.Value)
-							ZBuffer[key] = new Tuple<double, Color>(pixel.Value,
-								Algorithms.Algorithms.GetColor(_polygons.First().Normal,
-									new Vector3(pixel.Key.Item1, pixel.Key.Item2, (float)pixel.Value),
-									Settings._lightPosition,
-									Settings._lightColor, Settings._objectColor));
+						if (value.Item1 <= pixel.Value.Item1)
+							ZBuffer[key] = pixel.Value;
 					}
 
 					if (value == null)
-						ZBuffer.Add(pixel.Key, new Tuple<double, Color>(pixel.Value,
-							Algorithms.Algorithms.GetColor(_polygons.First().Normal,
-								new Vector3(pixel.Key.Item1, pixel.Key.Item2, (float)pixel.Value),
-								Settings._lightPosition,
-								Settings._lightColor, Settings._objectColor)));
+						ZBuffer.Add(pixel.Key, pixel.Value);
 				}
-
 				_threads.Dequeue();
 				_polygons.Dequeue();
 			}

@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.IO;
+using System.Numerics;
 using System.Reflection;
 using System.Text.Json;
 using System.Windows;
@@ -22,7 +23,7 @@ namespace CourseWork.CustomDataTypes
 				catch
 				{
 					MessageBox.Show("Ошибка в настройке Position");
-					_isOk=false;
+					_isOk = false;
 				}
 			}
 		}
@@ -64,7 +65,7 @@ namespace CourseWork.CustomDataTypes
 				}
 			}
 		}
-		public Quaternion _rotation { get; private set; }
+		public Vector3 _rotation { get; private set; }
 
 		public float[] Rotation
 		{
@@ -73,7 +74,7 @@ namespace CourseWork.CustomDataTypes
 			{
 				try
 				{
-					_rotation = new Quaternion(new Vector3(value),1);
+					_rotation = new Vector3(value);
 				}
 				catch
 				{
@@ -156,7 +157,7 @@ namespace CourseWork.CustomDataTypes
 			}
 		}
 		private float _spectatorStep;
-		public float SpectatorStep 
+		public float SpectatorStep
 		{
 			get => _spectatorStep;
 			set
@@ -292,7 +293,23 @@ namespace CourseWork.CustomDataTypes
 				}
 			}
 		}
-
+		private bool _lightFollowCamera;
+		public bool LightFollowCamera
+		{
+			get => _lightFollowCamera;
+			set
+			{
+				try
+				{
+					_lightFollowCamera = value;
+				}
+				catch
+				{
+					MessageBox.Show("Ошибка в настройке LightFollowCamera");
+					_isOk = false;
+				}
+			}
+		}
 		public Vector3 _lightPosition { get; private set; }
 
 		public float[] LightPosition
@@ -374,13 +391,23 @@ namespace CourseWork.CustomDataTypes
 		}
 		private static async Task<T?> ReadAsync<T>(string filePath) where T : class
 		{
+			Stream assembly;
 			try
 			{
-				return await JsonSerializer.DeserializeAsync<T>(utf8Json: Assembly.GetExecutingAssembly().GetManifestResourceStream(Assembly.GetExecutingAssembly().GetName().Name + ".InputData." + filePath));
+				assembly = Assembly.GetExecutingAssembly().GetManifestResourceStream(Assembly.GetExecutingAssembly().GetName().Name + ".InputData." + filePath);
 			}
 			catch
 			{
 				MessageBox.Show("Файл с настройками не найден");
+				return null;
+			}
+			try
+			{
+				return await JsonSerializer.DeserializeAsync<T>(utf8Json: assembly);
+			}
+			catch
+			{
+				MessageBox.Show("Ошибка в названиях настроек");
 				return null;
 			}
 		}

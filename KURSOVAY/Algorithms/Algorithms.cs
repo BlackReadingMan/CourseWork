@@ -78,7 +78,7 @@ namespace CourseWork.Algorithms
 			var specular = specularStrength * spec * lightColor;
 
 			var finalLight = ambient + diffuse + specular;
-			for(var i=0;i<3;i++)
+			for (var i = 0; i < 3; i++)
 				if (finalLight[i] > 1f)
 					finalLight[i] = 1f;
 			var result = finalLight * objectColor;
