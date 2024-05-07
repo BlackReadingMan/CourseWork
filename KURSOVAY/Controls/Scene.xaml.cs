@@ -16,6 +16,7 @@ namespace CourseWork.Controls
 		private Vector3 _turnVector3 = Vector3.Zero;
 		private KeyEventArgs? _pressedKey;
 		private bool _running;
+		private ImageSource? _imageSource;
 		public Scene()
 		{
 			InitializeComponent();
@@ -56,27 +57,19 @@ namespace CourseWork.Controls
 					break;
 			}
 		}
-		private async void SceneUpdate()
+		private async void SceneUpdateAsync()
 		{
 			_running = true;
 			MakeTurnVector();
-			if (_turnVector3 == Vector3.Zero) return;
-			await Task.Run(() => _renderer.PictureUpdate(RenderSize, _turnVector3));
+			if (_turnVector3 == Vector3.Zero){ _running = false; return;}
+			_imageSource = await _renderer.GetPictureAsync(RenderSize, _turnVector3);
 			DataToUi();
 			_running = false;
 		}
 		private void DataToUi()
 		{
 			RenderTimer.Content = _renderer.RenderTime;
-			var image = new WriteableBitmap((int)ActualWidth, (int)ActualHeight, 96, 96, PixelFormats.Bgra32, null);
-			foreach (var pixel in _renderer.ZBuffer.Where(x =>
-							 x.Key.Item1 < ActualWidth && x.Key.Item1 >= 0 && x.Key.Item2 < ActualHeight &&
-							 x.Key.Item2 >= 0))
-			{
-				image.WritePixels(new Int32Rect(pixel.Key.Item1,pixel.Key.Item2, 1, 1),
-					new byte[] { pixel.Value.Item2.B, pixel.Value.Item2.G, pixel.Value.Item2.R, 255 }, 4, 0);
-			}
-			Picture.Source = image;
+			Picture.Source = _imageSource;
 		}
 
 		private static readonly DependencyProperty PaintedObjProperty =
@@ -110,7 +103,7 @@ namespace CourseWork.Controls
 		{
 			if (_running || PaintedObj is null || Settings is null) return;
 			_pressedKey = e;
-			SceneUpdate();
+			SceneUpdateAsync();
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)

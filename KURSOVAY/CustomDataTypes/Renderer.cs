@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace CourseWork.CustomDataTypes
 {
@@ -41,6 +42,7 @@ namespace CourseWork.CustomDataTypes
 						value.Y -= 1f;
 						break;
 				}
+
 				switch (value.Z)
 				{
 					case <= 0:
@@ -50,10 +52,11 @@ namespace CourseWork.CustomDataTypes
 						value.Z -= Settings.SpectatorStep;
 						break;
 				}
+
 				_cameraSpherePosition = value;
 				CreateCameraWorldPosition();
 				CheckLightPosition();
-				
+
 			}
 		}
 
@@ -61,14 +64,15 @@ namespace CourseWork.CustomDataTypes
 		{
 			_lightPosition = Settings.LightFollowCamera ? _cameraPosition : Settings._lightPosition;
 		}
+
 		private void CreateCameraWorldPosition()
 		{
 			_cameraPosition = Settings._cameraTarget + new Vector3(
 				(float)(_cameraSpherePosition.X * Math.Sin(_cameraSpherePosition.Y * 2 * Math.PI) *
-						Math.Sin(_cameraSpherePosition.Z * Math.PI)),
+				        Math.Sin(_cameraSpherePosition.Z * Math.PI)),
 				(float)(_cameraSpherePosition.X * Math.Cos(_cameraSpherePosition.Z * Math.PI)),
 				(float)(_cameraSpherePosition.X * Math.Cos(_cameraSpherePosition.Y * 2 * Math.PI) *
-						Math.Sin(_cameraSpherePosition.Z * Math.PI))
+				        Math.Sin(_cameraSpherePosition.Z * Math.PI))
 			);
 		}
 
@@ -101,12 +105,12 @@ namespace CourseWork.CustomDataTypes
 
 		private void RenderPoints()
 		{
-			Matrix4x4 nullWorld = Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
+			var nullWorld = Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
 				Settings._forward, Settings._up);
 
 			foreach (var triangle in PaintedObj.F)
 			{
-				Vector3 newNormal = Vector3.Normalize(
+				var newNormal = Vector3.Normalize(
 					Matrix4X4Extension.VectorMatrixMultiplication(
 						PaintedObj.Vn[triangle.Item1.Item3 - 1],
 						nullWorld * _model));
@@ -123,15 +127,15 @@ namespace CourseWork.CustomDataTypes
 					Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item1.Item1 - 1],
 						_lightPosition,
 						Settings._lightColor, Settings._objectColor),
-				Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item2.Item1 - 1]
+					Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item2.Item1 - 1]
 						,
 						_lightPosition,
 						Settings._lightColor, Settings._objectColor),
-				Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item3.Item1 - 1]
+					Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item3.Item1 - 1]
 						,
 						_lightPosition,
 						Settings._lightColor, Settings._objectColor)
-					));
+				));
 				_threads.Enqueue(new Thread(_polygons.Last().MakeFill));
 				_threads.Last().Start();
 			}
@@ -154,6 +158,7 @@ namespace CourseWork.CustomDataTypes
 					if (value == null)
 						ZBuffer.Add(pixel.Key, pixel.Value);
 				}
+
 				_threads.Dequeue();
 				_polygons.Dequeue();
 			}
@@ -162,16 +167,16 @@ namespace CourseWork.CustomDataTypes
 		private void BuildCoordinateAxes()
 		{
 			var newFinal = Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
-							   new Vector3(0, 0, -1), new Vector3(0, 1, 0)) * _view * _projection *
-						   _viewport;
+				               new Vector3(0, 0, -1), new Vector3(0, 1, 0)) * _view * _projection *
+			               _viewport;
 			var vectorO = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(0, 0, 0), newFinal);
 			var vectorX = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(5, 0, 0), newFinal);
 			var vectorY = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(0, 5, 0), newFinal);
 			var vectorZ = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(0, 0, 5), newFinal);
 			foreach (var key in Algorithms.Algorithms
-						 .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorX.X, vectorX.Y)).Select(item =>
-							 new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
-								 (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
+				         .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorX.X, vectorX.Y)).Select(item =>
+					         new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
+						         (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
 				if (ZBuffer.ContainsKey(key))
 				{
@@ -184,9 +189,9 @@ namespace CourseWork.CustomDataTypes
 			}
 
 			foreach (var key in Algorithms.Algorithms
-						 .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorY.X, vectorY.Y)).Select(item =>
-							 new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
-								 (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
+				         .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorY.X, vectorY.Y)).Select(item =>
+					         new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
+						         (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
 				if (ZBuffer.ContainsKey(key))
 				{
@@ -199,9 +204,9 @@ namespace CourseWork.CustomDataTypes
 			}
 
 			foreach (var key in Algorithms.Algorithms
-						 .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorZ.X, vectorZ.Y)).Select(item =>
-							 new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
-								 (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
+				         .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorZ.X, vectorZ.Y)).Select(item =>
+					         new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
+						         (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
 				if (ZBuffer.ContainsKey(key))
 				{
@@ -213,15 +218,32 @@ namespace CourseWork.CustomDataTypes
 				}
 			}
 		}
-		public void PictureUpdate(Size size, Vector3 cameraTurn)
+
+		public async Task<WriteableBitmap> GetPictureAsync(Size size, Vector3 cameraTurn)
 		{
 			DataUpdate(size, cameraTurn);
 			_stopwatch.Start();
-			RenderPoints();
-			MakeZBuffer();
+			await Task.Run(RenderPoints);
+			await Task.Run(MakeZBuffer);
 			BuildCoordinateAxes();
 			_stopwatch.Stop();
+			var result = DrawPicture();
 			RenderTime = _stopwatch.ToString();
+			return result;
+		}
+
+		private WriteableBitmap DrawPicture()
+		{
+			var image = new WriteableBitmap((int)Size.Width, (int)Size.Height, 96, 96, PixelFormats.Bgra32, null);
+			foreach (var pixel in ZBuffer.Where(x =>
+				         x.Key.Item1 < Size.Width && x.Key.Item1 >= 0 && x.Key.Item2 < Size.Height &&
+				         x.Key.Item2 >= 0))
+			{
+				image.WritePixels(new Int32Rect(pixel.Key.Item1, pixel.Key.Item2, 1, 1),
+					new byte[] { pixel.Value.Item2.B, pixel.Value.Item2.G, pixel.Value.Item2.R, 255 }, 4, 0);
+			}
+
+			return image;
 		}
 	}
 }
