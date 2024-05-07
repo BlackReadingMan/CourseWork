@@ -15,8 +15,8 @@
 	"Y0": 0.0,
 	"MinDepth": -100,
 	"MaxDepth": 100,
-	"LightFollowCamera": true,
-	"LightPosition": [ 0.0, -1.0, 6.0 ],
+	"LightFollowCamera": false,
+	"LightPosition": [ 0.0, 3.0, 6.0 ],
 	"LightColor": [ 1.0, 1.0, 1.0 ],
 	"ObjectColor": [ 1.0, 0.5, 0.31 ],
 	"BackGroundColor": [ 0.0, 0.0, 0.0 ]

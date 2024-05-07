@@ -22,7 +22,7 @@ namespace CourseWork.CustomDataTypes
 		private Vector3 _lightPosition;
 		private Vector3 _cameraSpherePosition;
 		public Obj PaintedObj { private get; set; } = new();
-		public Settings Settings { private get; set; } = new();
+		public Settings RenderSettings { private get; set; } = new();
 		public Dictionary<Tuple<int, int>, Tuple<double, Color>> ZBuffer { get; private set; } = [];
 		public string RenderTime { get; private set; } = "";
 		private Size Size { get; set; }
@@ -46,10 +46,10 @@ namespace CourseWork.CustomDataTypes
 				switch (value.Z)
 				{
 					case <= 0:
-						value.Z += Settings.SpectatorStep;
+						value.Z += RenderSettings.SpectatorStep;
 						break;
 					case >= 1:
-						value.Z -= Settings.SpectatorStep;
+						value.Z -= RenderSettings.SpectatorStep;
 						break;
 				}
 
@@ -62,12 +62,12 @@ namespace CourseWork.CustomDataTypes
 
 		private void CheckLightPosition()
 		{
-			_lightPosition = Settings.LightFollowCamera ? _cameraPosition : Settings._lightPosition;
+			_lightPosition = RenderSettings.LightFollowCamera ? _cameraPosition : RenderSettings._lightPosition;
 		}
 
 		private void CreateCameraWorldPosition()
 		{
-			_cameraPosition = Settings._cameraTarget + new Vector3(
+			_cameraPosition = RenderSettings._cameraTarget + new Vector3(
 				(float)(_cameraSpherePosition.X * Math.Sin(_cameraSpherePosition.Y * 2 * Math.PI) *
 				        Math.Sin(_cameraSpherePosition.Z * Math.PI)),
 				(float)(_cameraSpherePosition.X * Math.Cos(_cameraSpherePosition.Z * Math.PI)),
@@ -79,10 +79,10 @@ namespace CourseWork.CustomDataTypes
 		private void CameraTurn(in Vector3 cameraTurn)
 		{
 			if (cameraTurn == new Vector3(-1f, -1f, -1f))
-				CameraSpherePosition = Settings._radiusPhiTheta;
+				CameraSpherePosition = RenderSettings._radiusPhiTheta;
 			else
 				CameraSpherePosition +=
-					cameraTurn * new Vector3(1f, Settings.SpectatorStep, Settings.SpectatorStep);
+					cameraTurn * new Vector3(1f, RenderSettings.SpectatorStep, RenderSettings.SpectatorStep);
 		}
 
 		private void DataUpdate(in Size size, in Vector3 cameraTurn)
@@ -90,15 +90,17 @@ namespace CourseWork.CustomDataTypes
 			Size = size;
 			ZBuffer = [];
 			CameraTurn(cameraTurn);
-			_world = Matrix4X4Extension.CreateWorld(Settings._position, Settings._forward, Settings._up);
-			_model = Matrix4X4Extension.CreateModel(Settings._rotation, Settings.Scale);
-			_view = Matrix4X4Extension.CreateLookAt(_cameraPosition, Settings._cameraTarget, Settings._cameraUpVector);
-			_projection = Matrix4X4Extension.CreatePerspectiveFieldOfView(Settings.FieldOfView,
-				(float)(Size.Width / Size.Height), Settings.NearPlaneDistance, Settings.FarPlaneDistance);
+			_world = Matrix4X4Extension.CreateWorld(RenderSettings._position, RenderSettings._forward,
+				RenderSettings._up);
+			_model = Matrix4X4Extension.CreateModel(RenderSettings._rotation, RenderSettings.Scale);
+			_view = Matrix4X4Extension.CreateLookAt(_cameraPosition, RenderSettings._cameraTarget,
+				RenderSettings._cameraUpVector);
+			_projection = Matrix4X4Extension.CreatePerspectiveFieldOfView(RenderSettings.FieldOfView,
+				(float)(Size.Width / Size.Height), RenderSettings.NearPlaneDistance, RenderSettings.FarPlaneDistance);
 
-			_viewport = Matrix4X4Extension.CreateViewport(Settings.X0, Settings.Y0, (float)Size.Width,
-				(float)Size.Height, Settings.MinDepth,
-				Settings.MaxDepth);
+			_viewport = Matrix4X4Extension.CreateViewport(RenderSettings.X0, RenderSettings.Y0, (float)Size.Width,
+				(float)Size.Height, RenderSettings.MinDepth,
+				RenderSettings.MaxDepth);
 			_final = _world * _model * _view * _projection * _viewport;
 			_stopwatch.Reset();
 		}
@@ -106,7 +108,7 @@ namespace CourseWork.CustomDataTypes
 		private void RenderPoints()
 		{
 			var nullWorld = Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
-				Settings._forward, Settings._up);
+				RenderSettings._forward, RenderSettings._up);
 
 			foreach (var triangle in PaintedObj.F)
 			{
@@ -126,15 +128,15 @@ namespace CourseWork.CustomDataTypes
 						_final),
 					Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item1.Item1 - 1],
 						_lightPosition,
-						Settings._lightColor, Settings._objectColor),
+						RenderSettings._lightColor, RenderSettings._objectColor),
 					Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item2.Item1 - 1]
 						,
 						_lightPosition,
-						Settings._lightColor, Settings._objectColor),
+						RenderSettings._lightColor, RenderSettings._objectColor),
 					Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item3.Item1 - 1]
 						,
 						_lightPosition,
-						Settings._lightColor, Settings._objectColor)
+						RenderSettings._lightColor, RenderSettings._objectColor)
 				));
 				_threads.Enqueue(new Thread(_polygons.Last().MakeFill));
 				_threads.Last().Start();
@@ -234,10 +236,10 @@ namespace CourseWork.CustomDataTypes
 
 		private WriteableBitmap DrawPicture()
 		{
-			var image = new WriteableBitmap((int)Size.Width, (int)Size.Height, 96, 96, PixelFormats.Bgra32, null);
+			var image = new WriteableBitmap((int)Size.Width, (int)Size.Height, 96, 96, PixelFormats.Bgr32, null);
 			foreach (var pixel in ZBuffer.Where(x =>
 				         x.Key.Item1 < Size.Width && x.Key.Item1 >= 0 && x.Key.Item2 < Size.Height &&
-				         x.Key.Item2 >= 0))
+				         x.Key.Item2 >= 0 && x.Value.Item2 != RenderSettings._backGroundColor))
 			{
 				image.WritePixels(new Int32Rect(pixel.Key.Item1, pixel.Key.Item2, 1, 1),
 					new byte[] { pixel.Value.Item2.B, pixel.Value.Item2.G, pixel.Value.Item2.R, 255 }, 4, 0);

@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Media;
 
 namespace CourseWork.CustomDataTypes
 {
@@ -364,15 +365,15 @@ namespace CourseWork.CustomDataTypes
 				}
 			}
 		}
-		public Vector3 _backGroundColor { get; private set; }
+		public Color _backGroundColor { get; private set; }
 		public float[] BackGroundColor
 		{
-			get => [_backGroundColor.X, _backGroundColor.Y, _backGroundColor.Z];
+			get => [_backGroundColor.R, _backGroundColor.G, _backGroundColor.B];
 			set
 			{
 				try
 				{
-					_backGroundColor = new Vector3(value);
+					_backGroundColor = Color.FromRgb((byte)(value[0] * 255), (byte)(value[1] * 255), (byte)(value[2] * 255));
 				}
 				catch
 				{

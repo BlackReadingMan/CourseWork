@@ -3,7 +3,6 @@ using System.Numerics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace CourseWork.Controls
 {
@@ -17,6 +16,7 @@ namespace CourseWork.Controls
 		private KeyEventArgs? _pressedKey;
 		private bool _running;
 		private ImageSource? _imageSource;
+
 		public Scene()
 		{
 			InitializeComponent();
@@ -57,15 +57,22 @@ namespace CourseWork.Controls
 					break;
 			}
 		}
+
 		private async void SceneUpdateAsync()
 		{
 			_running = true;
 			MakeTurnVector();
-			if (_turnVector3 == Vector3.Zero){ _running = false; return;}
+			if (_turnVector3 == Vector3.Zero)
+			{
+				_running = false;
+				return;
+			}
+
 			_imageSource = await _renderer.GetPictureAsync(RenderSize, _turnVector3);
 			DataToUi();
 			_running = false;
 		}
+
 		private void DataToUi()
 		{
 			RenderTimer.Content = _renderer.RenderTime;
@@ -81,10 +88,12 @@ namespace CourseWork.Controls
 			get => (Obj)GetValue(PaintedObjProperty);
 			set => SetValue(PaintedObjProperty, value);
 		}
+
 		private static void OnPaintedObjChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
 			((Scene)d)._renderer.PaintedObj = (Obj)e.NewValue;
 		}
+
 		private static readonly DependencyProperty SettingsProperty =
 			DependencyProperty.Register(nameof(Settings), typeof(Settings), typeof(Scene),
 				new FrameworkPropertyMetadata(OnSettingsChanged));
@@ -94,11 +103,13 @@ namespace CourseWork.Controls
 			get => (Settings)GetValue(SettingsProperty);
 			set => SetValue(SettingsProperty, value);
 		}
+
 		private static void OnSettingsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			((Scene)d)._renderer.Settings = (Settings)e.NewValue;
-			((Scene)d).Background = new SolidColorBrush(Color.FromRgb((byte)(((Settings)e.NewValue).BackGroundColor[0] * 255), (byte)(((Settings)e.NewValue).BackGroundColor[1] * 255), (byte)(((Settings)e.NewValue).BackGroundColor[2] * 255)));
+			((Scene)d)._renderer.RenderSettings = (Settings)e.NewValue;
+			((Scene)d).Background = new SolidColorBrush(((Settings)e.NewValue)._backGroundColor);
 		}
+
 		private void UC_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (_running || PaintedObj is null || Settings is null) return;
