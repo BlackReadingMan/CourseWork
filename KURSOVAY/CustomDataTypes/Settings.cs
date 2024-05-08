@@ -50,36 +50,18 @@ namespace CourseWork.CustomDataTypes
 
 		public Vector3 _up { get; private set; }
 
-		public float[] Up
+		public float Up
 		{
-			get => [_up.X, _up.Y, _up.Z];
+			get => _up.Y;
 			set
 			{
 				try
 				{
-					_up = new Vector3(value);
+					_up = new Vector3(0,value,0);
 				}
 				catch
 				{
 					MessageBox.Show("Ошибка в настройке Up");
-					_isOk = false;
-				}
-			}
-		}
-		public Vector3 _rotation { get; private set; }
-
-		public float[] Rotation
-		{
-			get => [_rotation.X, _rotation.Y, _rotation.Z];
-			set
-			{
-				try
-				{
-					_rotation = new Vector3(value);
-				}
-				catch
-				{
-					MessageBox.Show("Ошибка в настройке Rotation");
 					_isOk = false;
 				}
 			}

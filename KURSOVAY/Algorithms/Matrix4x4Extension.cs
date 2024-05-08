@@ -23,28 +23,12 @@ namespace CourseWork.Algorithms
 			return result;
 		}
 
-		public static Matrix4x4 CreateModel(in Vector3 rotation, in float scale)
+		public static Matrix4x4 CreateScale(in float scale)
 		{
-			var result = new Matrix4x4(
-				1, 0, 0, 0,
-				0, (float)Math.Cos(rotation.X), (float)Math.Sin(rotation.X), 0,
-				0, -(float)Math.Sin(rotation.X), (float)Math.Cos(rotation.X), 0,
-				0, 0, 0, 1
-			) * new Matrix4x4(
-				(float)Math.Cos(rotation.Y), 0, -(float)Math.Sin(rotation.Y), 0,
-				0, 1, 0, 0,
-				(float)Math.Sin(rotation.Y), 0, (float)Math.Cos(rotation.Y), 0,
-				0, 0, 0, 1
-			) * new Matrix4x4(
-				(float)Math.Cos(rotation.Z), (float)Math.Sin(rotation.Z), 0, 0,
-				-(float)Math.Sin(rotation.Z), (float)Math.Cos(rotation.Z), 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1
-			) * new Matrix4x4(scale, 0, 0, 0,
+			return  new Matrix4x4(scale, 0, 0, 0,
 				0, scale, 0, 0,
 				0, 0, scale, 0,
-				0, 0, 0, 1);
-			return result;
+				0, 0, 0, 1);;
 		}
 
 		public static Matrix4x4 CreateLookAt(in Vector3 cameraPosition, in Vector3 cameraTarget,

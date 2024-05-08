@@ -10,7 +10,7 @@ namespace CourseWork.CustomDataTypes
 	internal class Renderer
 	{
 		private Matrix4x4 _world;
-		private Matrix4x4 _model;
+		private Matrix4x4 _scale;
 		private Matrix4x4 _view;
 		private Matrix4x4 _projection;
 		private Matrix4x4 _viewport;
@@ -21,9 +21,9 @@ namespace CourseWork.CustomDataTypes
 		private Vector3 _cameraPosition;
 		private Vector3 _lightPosition;
 		private Vector3 _cameraSpherePosition;
+		private Dictionary<Tuple<int, int>, Tuple<double, Color>> _zBuffer = [];
 		public Obj PaintedObj { private get; set; } = new();
 		public Settings RenderSettings { private get; set; } = new();
-		public Dictionary<Tuple<int, int>, Tuple<double, Color>> ZBuffer { get; private set; } = [];
 		public string RenderTime { get; private set; } = "";
 		private Size Size { get; set; }
 
@@ -88,11 +88,11 @@ namespace CourseWork.CustomDataTypes
 		private void DataUpdate(in Size size, in Vector3 cameraTurn)
 		{
 			Size = size;
-			ZBuffer = [];
+			_zBuffer = [];
 			CameraTurn(cameraTurn);
 			_world = Matrix4X4Extension.CreateWorld(RenderSettings._position, RenderSettings._forward,
 				RenderSettings._up);
-			_model = Matrix4X4Extension.CreateModel(RenderSettings._rotation, RenderSettings.Scale);
+			_scale = Matrix4X4Extension.CreateScale(RenderSettings.Scale);
 			_view = Matrix4X4Extension.CreateLookAt(_cameraPosition, RenderSettings._cameraTarget,
 				RenderSettings._cameraUpVector);
 			_projection = Matrix4X4Extension.CreatePerspectiveFieldOfView(RenderSettings.FieldOfView,
@@ -101,7 +101,7 @@ namespace CourseWork.CustomDataTypes
 			_viewport = Matrix4X4Extension.CreateViewport(RenderSettings.X0, RenderSettings.Y0, (float)Size.Width,
 				(float)Size.Height, RenderSettings.MinDepth,
 				RenderSettings.MaxDepth);
-			_final = _world * _model * _view * _projection * _viewport;
+			_final = _world * _scale * _view * _projection * _viewport;
 			_stopwatch.Reset();
 		}
 
@@ -115,7 +115,7 @@ namespace CourseWork.CustomDataTypes
 				var newNormal = Vector3.Normalize(
 					Matrix4X4Extension.VectorMatrixMultiplication(
 						PaintedObj.Vn[triangle.Item1.Item3 - 1],
-						nullWorld * _model));
+						nullWorld));
 				_polygons.Enqueue(new Polygon(
 					Matrix4X4Extension.VectorMatrixMultiplication(
 						PaintedObj.V[triangle.Item1.Item1 - 1],
@@ -151,14 +151,14 @@ namespace CourseWork.CustomDataTypes
 				foreach (var pixel in _polygons.First().Buffer)
 				{
 					Tuple<int, int> key = new(pixel.Key.Item1, pixel.Key.Item2);
-					if (ZBuffer.TryGetValue(key, out var value))
+					if (_zBuffer.TryGetValue(key, out var value))
 					{
 						if (value.Item1 <= pixel.Value.Item1)
-							ZBuffer[key] = pixel.Value;
+							_zBuffer[key] = pixel.Value;
 					}
 
 					if (value == null)
-						ZBuffer.Add(pixel.Key, pixel.Value);
+						_zBuffer.Add(pixel.Key, pixel.Value);
 				}
 
 				_threads.Dequeue();
@@ -180,13 +180,13 @@ namespace CourseWork.CustomDataTypes
 					         new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
 						         (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
-				if (ZBuffer.ContainsKey(key))
+				if (_zBuffer.ContainsKey(key))
 				{
-					ZBuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(255, 0, 0));
+					_zBuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(255, 0, 0));
 				}
 				else
 				{
-					ZBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(255, 0, 0)));
+					_zBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(255, 0, 0)));
 				}
 			}
 
@@ -195,13 +195,13 @@ namespace CourseWork.CustomDataTypes
 					         new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
 						         (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
-				if (ZBuffer.ContainsKey(key))
+				if (_zBuffer.ContainsKey(key))
 				{
-					ZBuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(0, 255, 0));
+					_zBuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(0, 255, 0));
 				}
 				else
 				{
-					ZBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(0, 255, 0)));
+					_zBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(0, 255, 0)));
 				}
 			}
 
@@ -210,13 +210,13 @@ namespace CourseWork.CustomDataTypes
 					         new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
 						         (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
-				if (ZBuffer.ContainsKey(key))
+				if (_zBuffer.ContainsKey(key))
 				{
-					ZBuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(0, 0, 255));
+					_zBuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(0, 0, 255));
 				}
 				else
 				{
-					ZBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(0, 0, 255)));
+					_zBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(0, 0, 255)));
 				}
 			}
 		}
@@ -237,7 +237,7 @@ namespace CourseWork.CustomDataTypes
 		private WriteableBitmap DrawPicture()
 		{
 			var image = new WriteableBitmap((int)Size.Width, (int)Size.Height, 96, 96, PixelFormats.Bgra32, null);
-			foreach (var pixel in ZBuffer.Where(x =>
+			foreach (var pixel in _zBuffer.Where(x =>
 				         x.Key.Item1 < Size.Width && x.Key.Item1 >= 0 && x.Key.Item2 < Size.Height &&
 				         x.Key.Item2 >= 0 && x.Value.Item2 != RenderSettings._backGroundColor))
 			{
