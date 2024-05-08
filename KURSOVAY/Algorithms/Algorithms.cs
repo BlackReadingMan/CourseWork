@@ -6,7 +6,7 @@ namespace CourseWork.Algorithms
 {
 	internal static class Algorithms
 	{
-		public static void Cda(in Vector3 point1, in Vector3 point2, ref Dictionary<int, Tuple<Point, Point>> lines)
+		public static void Cda(in Vector3 point1, in Vector3 point2, Dictionary<int, Tuple<Point, Point>> lines)
 		{
 			double dx = point2.X - point1.X;
 			double dy = point2.Y - point1.Y;

@@ -57,7 +57,7 @@ namespace CourseWork.CustomDataTypes
 			{
 				try
 				{
-					_up = new Vector3(0,value,0);
+					_up = new Vector3(0, value, 0);
 				}
 				catch
 				{

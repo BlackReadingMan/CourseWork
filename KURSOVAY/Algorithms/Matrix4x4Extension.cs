@@ -25,10 +25,10 @@ namespace CourseWork.Algorithms
 
 		public static Matrix4x4 CreateScale(in float scale)
 		{
-			return  new Matrix4x4(scale, 0, 0, 0,
+			return new Matrix4x4(scale, 0, 0, 0,
 				0, scale, 0, 0,
 				0, 0, scale, 0,
-				0, 0, 0, 1);;
+				0, 0, 0, 1); ;
 		}
 
 		public static Matrix4x4 CreateLookAt(in Vector3 cameraPosition, in Vector3 cameraTarget,

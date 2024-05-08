@@ -15,17 +15,16 @@ namespace CourseWork.CustomDataTypes
 		private Matrix4x4 _projection;
 		private Matrix4x4 _viewport;
 		private Matrix4x4 _final;
-		private readonly Queue<Thread> _threads = [];
-		private readonly Queue<Polygon> _polygons = [];
-		private readonly Stopwatch _stopwatch = new();
 		private Vector3 _cameraPosition;
 		private Vector3 _lightPosition;
 		private Vector3 _cameraSpherePosition;
+		private Size _size;
+		private readonly Queue<Thread> _threads = [];
+		private readonly Stopwatch _stopwatch = new();
 		private Dictionary<Tuple<int, int>, Tuple<double, Color>> _zBuffer = [];
 		public Obj PaintedObj { private get; set; } = new();
 		public Settings RenderSettings { private get; set; } = new();
 		public string RenderTime { get; private set; } = "";
-		private Size Size { get; set; }
 
 		private Vector3 CameraSpherePosition
 		{
@@ -69,10 +68,10 @@ namespace CourseWork.CustomDataTypes
 		{
 			_cameraPosition = RenderSettings._cameraTarget + new Vector3(
 				(float)(_cameraSpherePosition.X * Math.Sin(_cameraSpherePosition.Y * 2 * Math.PI) *
-				        Math.Sin(_cameraSpherePosition.Z * Math.PI)),
+						Math.Sin(_cameraSpherePosition.Z * Math.PI)),
 				(float)(_cameraSpherePosition.X * Math.Cos(_cameraSpherePosition.Z * Math.PI)),
 				(float)(_cameraSpherePosition.X * Math.Cos(_cameraSpherePosition.Y * 2 * Math.PI) *
-				        Math.Sin(_cameraSpherePosition.Z * Math.PI))
+						Math.Sin(_cameraSpherePosition.Z * Math.PI))
 			);
 		}
 
@@ -87,7 +86,7 @@ namespace CourseWork.CustomDataTypes
 
 		private void DataUpdate(in Size size, in Vector3 cameraTurn)
 		{
-			Size = size;
+			_size = size;
 			_zBuffer = [];
 			CameraTurn(cameraTurn);
 			_world = Matrix4X4Extension.CreateWorld(RenderSettings._position, RenderSettings._forward,
@@ -96,10 +95,10 @@ namespace CourseWork.CustomDataTypes
 			_view = Matrix4X4Extension.CreateLookAt(_cameraPosition, RenderSettings._cameraTarget,
 				RenderSettings._cameraUpVector);
 			_projection = Matrix4X4Extension.CreatePerspectiveFieldOfView(RenderSettings.FieldOfView,
-				(float)(Size.Width / Size.Height), RenderSettings.NearPlaneDistance, RenderSettings.FarPlaneDistance);
+				(float)(_size.Width / _size.Height), RenderSettings.NearPlaneDistance, RenderSettings.FarPlaneDistance);
 
-			_viewport = Matrix4X4Extension.CreateViewport(RenderSettings.X0, RenderSettings.Y0, (float)Size.Width,
-				(float)Size.Height, RenderSettings.MinDepth,
+			_viewport = Matrix4X4Extension.CreateViewport(RenderSettings.X0, RenderSettings.Y0, (float)_size.Width,
+				(float)_size.Height, RenderSettings.MinDepth,
 				RenderSettings.MaxDepth);
 			_final = _world * _scale * _view * _projection * _viewport;
 			_stopwatch.Reset();
@@ -110,62 +109,61 @@ namespace CourseWork.CustomDataTypes
 			var nullWorld = Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
 				RenderSettings._forward, RenderSettings._up);
 
-			foreach (var triangle in PaintedObj.F)
+			foreach (var polygon in from triangle in PaintedObj.F
+									let newNormal = Vector3.Normalize(
+						 Matrix4X4Extension.VectorMatrixMultiplication(
+							 PaintedObj.Vn[triangle.Item1.Item3 - 1],
+							 nullWorld))
+									select new Polygon(
+						 Matrix4X4Extension.VectorMatrixMultiplication(
+							 PaintedObj.V[triangle.Item1.Item1 - 1],
+							 _final),
+						 Matrix4X4Extension.VectorMatrixMultiplication(
+							 PaintedObj.V[triangle.Item2.Item1 - 1],
+							 _final),
+						 Matrix4X4Extension.VectorMatrixMultiplication(
+							 PaintedObj.V[triangle.Item3.Item1 - 1],
+							 _final),
+						 Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item1.Item1 - 1],
+							 _lightPosition,
+							 RenderSettings._lightColor, RenderSettings._objectColor),
+						 Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item2.Item1 - 1]
+							 ,
+							 _lightPosition,
+							 RenderSettings._lightColor, RenderSettings._objectColor),
+						 Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item3.Item1 - 1]
+							 ,
+							 _lightPosition,
+							 RenderSettings._lightColor, RenderSettings._objectColor), _zBuffer
+					 ))
 			{
-				var newNormal = Vector3.Normalize(
-					Matrix4X4Extension.VectorMatrixMultiplication(
-						PaintedObj.Vn[triangle.Item1.Item3 - 1],
-						nullWorld));
-				_polygons.Enqueue(new Polygon(
-					Matrix4X4Extension.VectorMatrixMultiplication(
-						PaintedObj.V[triangle.Item1.Item1 - 1],
-						_final),
-					Matrix4X4Extension.VectorMatrixMultiplication(
-						PaintedObj.V[triangle.Item2.Item1 - 1],
-						_final),
-					Matrix4X4Extension.VectorMatrixMultiplication(
-						PaintedObj.V[triangle.Item3.Item1 - 1],
-						_final),
-					Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item1.Item1 - 1],
-						_lightPosition,
-						RenderSettings._lightColor, RenderSettings._objectColor),
-					Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item2.Item1 - 1]
-						,
-						_lightPosition,
-						RenderSettings._lightColor, RenderSettings._objectColor),
-					Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item3.Item1 - 1]
-						,
-						_lightPosition,
-						RenderSettings._lightColor, RenderSettings._objectColor),ref _zBuffer
-				));
-				_threads.Enqueue(new Thread(_polygons.Last().MakeFill));
+				_threads.Enqueue(new Thread(polygon.MakeFill));
 				_threads.Last().Start();
 			}
 		}
 
-		private void MakeZBuffer()
+		private void AwaitZBuffer()
 		{
 			while (_threads.Count != 0)
 			{
 				if (_threads.First().ThreadState != System.Threading.ThreadState.Stopped) continue;
 				_threads.Dequeue();
-				_polygons.Dequeue();
 			}
 		}
 
 		private void BuildCoordinateAxes()
 		{
 			var newFinal = Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
-				               new Vector3(0, 0, -1), new Vector3(0, 1, 0)) * _view * _projection *
-			               _viewport;
+							   new Vector3(0, 0, -1), new Vector3(0, 1, 0)) * _view * _projection *
+						   _viewport;
 			var vectorO = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(0, 0, 0), newFinal);
 			var vectorX = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(5, 0, 0), newFinal);
 			var vectorY = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(0, 5, 0), newFinal);
 			var vectorZ = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(0, 0, 5), newFinal);
 			foreach (var key in Algorithms.Algorithms
-				         .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorX.X, vectorX.Y)).Select(item =>
-					         new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
-						         (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
+						 .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorX.X, vectorX.Y)).Select(item =>
+							 new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
+								 (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
 				if (_zBuffer.ContainsKey(key))
 				{
@@ -178,9 +176,9 @@ namespace CourseWork.CustomDataTypes
 			}
 
 			foreach (var key in Algorithms.Algorithms
-				         .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorY.X, vectorY.Y)).Select(item =>
-					         new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
-						         (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
+						 .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorY.X, vectorY.Y)).Select(item =>
+							 new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
+								 (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
 				if (_zBuffer.ContainsKey(key))
 				{
@@ -193,9 +191,9 @@ namespace CourseWork.CustomDataTypes
 			}
 
 			foreach (var key in Algorithms.Algorithms
-				         .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorZ.X, vectorZ.Y)).Select(item =>
-					         new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
-						         (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
+						 .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorZ.X, vectorZ.Y)).Select(item =>
+							 new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
+								 (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
 			{
 				if (_zBuffer.ContainsKey(key))
 				{
@@ -213,7 +211,7 @@ namespace CourseWork.CustomDataTypes
 			DataUpdate(size, cameraTurn);
 			_stopwatch.Start();
 			await Task.Run(RenderPoints);
-			MakeZBuffer();
+			AwaitZBuffer();
 			BuildCoordinateAxes();
 			var result = DrawPicture();
 			_stopwatch.Stop();
@@ -223,10 +221,10 @@ namespace CourseWork.CustomDataTypes
 
 		private WriteableBitmap DrawPicture()
 		{
-			var image = new WriteableBitmap((int)Size.Width, (int)Size.Height, 96, 96, PixelFormats.Bgra32, null);
+			var image = new WriteableBitmap((int)_size.Width, (int)_size.Height, 96, 96, PixelFormats.Bgra32, null);
 			foreach (var pixel in _zBuffer.Where(x =>
-				         x.Key.Item1 < Size.Width && x.Key.Item1 >= 0 && x.Key.Item2 < Size.Height &&
-				         x.Key.Item2 >= 0 && x.Value.Item2 != RenderSettings._backGroundColor))
+						 x.Key.Item1 < _size.Width && x.Key.Item1 >= 0 && x.Key.Item2 < _size.Height &&
+						 x.Key.Item2 >= 0 && x.Value.Item2 != RenderSettings._backGroundColor))
 			{
 				image.WritePixels(new Int32Rect(pixel.Key.Item1, pixel.Key.Item2, 1, 1),
 					new byte[] { pixel.Value.Item2.B, pixel.Value.Item2.G, pixel.Value.Item2.R, 255 }, 4, 0);
