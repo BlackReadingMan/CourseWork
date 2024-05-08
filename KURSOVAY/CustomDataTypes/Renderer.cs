@@ -136,7 +136,7 @@ namespace CourseWork.CustomDataTypes
 					Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item3.Item1 - 1]
 						,
 						_lightPosition,
-						RenderSettings._lightColor, RenderSettings._objectColor)
+						RenderSettings._lightColor, RenderSettings._objectColor),ref _zBuffer
 				));
 				_threads.Enqueue(new Thread(_polygons.Last().MakeFill));
 				_threads.Last().Start();
@@ -148,19 +148,6 @@ namespace CourseWork.CustomDataTypes
 			while (_threads.Count != 0)
 			{
 				if (_threads.First().ThreadState != System.Threading.ThreadState.Stopped) continue;
-				foreach (var pixel in _polygons.First().Buffer)
-				{
-					Tuple<int, int> key = new(pixel.Key.Item1, pixel.Key.Item2);
-					if (_zBuffer.TryGetValue(key, out var value))
-					{
-						if (value.Item1 <= pixel.Value.Item1)
-							_zBuffer[key] = pixel.Value;
-					}
-
-					if (value == null)
-						_zBuffer.Add(pixel.Key, pixel.Value);
-				}
-
 				_threads.Dequeue();
 				_polygons.Dequeue();
 			}
@@ -226,7 +213,7 @@ namespace CourseWork.CustomDataTypes
 			DataUpdate(size, cameraTurn);
 			_stopwatch.Start();
 			await Task.Run(RenderPoints);
-			await Task.Run(MakeZBuffer);
+			MakeZBuffer();
 			BuildCoordinateAxes();
 			var result = DrawPicture();
 			_stopwatch.Stop();
