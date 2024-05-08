@@ -21,6 +21,7 @@ namespace CourseWork.Controls
 		{
 			InitializeComponent();
 			_renderer = new Renderer();
+			Focusable = true;
 		}
 
 		private void MakeTurnVector()
@@ -108,6 +109,9 @@ namespace CourseWork.Controls
 		{
 			((Scene)d)._renderer.RenderSettings = (Settings)e.NewValue;
 			((Scene)d).Background = new SolidColorBrush(((Settings)e.NewValue)._backGroundColor);
+			var fontColor = Brushes.White.Color - ((Settings)e.NewValue)._backGroundColor;
+			fontColor.A = 255;
+			((Scene)d).Tips.Foreground = new SolidColorBrush(fontColor);
 		}
 
 		private void UC_KeyDown(object sender, KeyEventArgs e)

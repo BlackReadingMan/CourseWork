@@ -228,15 +228,15 @@ namespace CourseWork.CustomDataTypes
 			await Task.Run(RenderPoints);
 			await Task.Run(MakeZBuffer);
 			BuildCoordinateAxes();
-			_stopwatch.Stop();
 			var result = DrawPicture();
+			_stopwatch.Stop();
 			RenderTime = _stopwatch.ToString();
 			return result;
 		}
 
 		private WriteableBitmap DrawPicture()
 		{
-			var image = new WriteableBitmap((int)Size.Width, (int)Size.Height, 96, 96, PixelFormats.Bgr32, null);
+			var image = new WriteableBitmap((int)Size.Width, (int)Size.Height, 96, 96, PixelFormats.Bgra32, null);
 			foreach (var pixel in ZBuffer.Where(x =>
 				         x.Key.Item1 < Size.Width && x.Key.Item1 >= 0 && x.Key.Item2 < Size.Height &&
 				         x.Key.Item2 >= 0 && x.Value.Item2 != RenderSettings._backGroundColor))
