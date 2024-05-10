@@ -51,6 +51,7 @@ internal static class Algorithms
 		var x = point1.X;
 		var y = point1.Y;
 
+		points.Add(new Point(x, y));
 		for (var i = 0; i < step; i++)
 		{
 			points.Add(new Point(x, y));

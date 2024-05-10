@@ -67,10 +67,10 @@ internal class Renderer
 	{
 		_cameraPosition = RenderSettings._cameraTarget + new Vector3(
 			(float)(_cameraSpherePosition.X * Math.Sin(_cameraSpherePosition.Y * 2 * Math.PI) *
-					Math.Sin(_cameraSpherePosition.Z * Math.PI)),
+			        Math.Sin(_cameraSpherePosition.Z * Math.PI)),
 			(float)(_cameraSpherePosition.X * Math.Cos(_cameraSpherePosition.Z * Math.PI)),
 			(float)(_cameraSpherePosition.X * Math.Cos(_cameraSpherePosition.Y * 2 * Math.PI) *
-					Math.Sin(_cameraSpherePosition.Z * Math.PI))
+			        Math.Sin(_cameraSpherePosition.Z * Math.PI))
 		);
 	}
 
@@ -110,101 +110,76 @@ internal class Renderer
 			RenderSettings._forward, RenderSettings._up);
 		var i = 0;
 		foreach (var polygon in from triangle in PaintedObj.F
-								let newNormal = Vector3.Normalize(
-									Matrix4X4Extension.VectorMatrixMultiplication(
-										PaintedObj.Vn[triangle.Item1.Item3 - 1],
-										nullWorld))
-								select new Polygon(
-									Matrix4X4Extension.VectorMatrixMultiplication(
-										PaintedObj.V[triangle.Item1.Item1 - 1],
-										_final),
-									Matrix4X4Extension.VectorMatrixMultiplication(
-										PaintedObj.V[triangle.Item2.Item1 - 1],
-										_final),
-									Matrix4X4Extension.VectorMatrixMultiplication(
-										PaintedObj.V[triangle.Item3.Item1 - 1],
-										_final),
-									Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item1.Item1 - 1],
-										_lightPosition,
-										RenderSettings._lightColor, RenderSettings._objectColor),
-									Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item2.Item1 - 1]
-										,
-										_lightPosition,
-										RenderSettings._lightColor, RenderSettings._objectColor),
-									Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item3.Item1 - 1]
-										,
-										_lightPosition,
-										RenderSettings._lightColor, RenderSettings._objectColor), _zBuffer
-								))
+		         let newNormal = Vector3.Normalize(
+			         Matrix4X4Extension.VectorMatrixMultiplication(
+				         PaintedObj.Vn[triangle.Item1.Item3 - 1],
+				         nullWorld))
+		         select new Polygon(
+			         Matrix4X4Extension.VectorMatrixMultiplication(
+				         PaintedObj.V[triangle.Item1.Item1 - 1],
+				         _final),
+			         Matrix4X4Extension.VectorMatrixMultiplication(
+				         PaintedObj.V[triangle.Item2.Item1 - 1],
+				         _final),
+			         Matrix4X4Extension.VectorMatrixMultiplication(
+				         PaintedObj.V[triangle.Item3.Item1 - 1],
+				         _final),
+			         Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item1.Item1 - 1],
+				         _lightPosition,
+				         RenderSettings._lightColor, RenderSettings._objectColor),
+			         Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item2.Item1 - 1]
+				         ,
+				         _lightPosition,
+				         RenderSettings._lightColor, RenderSettings._objectColor),
+			         Algorithms.Algorithms.GetColor(newNormal, PaintedObj.V[triangle.Item3.Item1 - 1]
+				         ,
+				         _lightPosition,
+				         RenderSettings._lightColor, RenderSettings._objectColor), _zBuffer
+		         ))
 		{
-			renderTasks[i] = new Task(polygon.MakeFill);
+			renderTasks[i] = new Task(() => polygon.MakeFill());
 			renderTasks[i].Start();
 			i++;
 		}
+
 		Task.WaitAll(renderTasks);
 	}
 
 	private void BuildCoordinateAxes()
 	{
 		var newFinal = Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
-						   new Vector3(0, 0, -1), new Vector3(0, 1, 0)) * _view * _projection *
-					   _viewport;
+			               new Vector3(0, 0, -1), new Vector3(0, 1, 0)) * _view * _projection *
+		               _viewport;
 		var vectorO = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(0, 0, 0), newFinal);
 		var vectorX = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(5, 0, 0), newFinal);
 		var vectorY = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(0, 5, 0), newFinal);
 		var vectorZ = Matrix4X4Extension.VectorMatrixMultiplication(new Vector3(0, 0, 5), newFinal);
-		foreach (var key in Algorithms.Algorithms
-					 .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorX.X, vectorX.Y)).Select(item =>
-						 new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
-							 (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
+		var linesTasks = new[]
 		{
-			if (_zBuffer.ContainsKey(key))
-			{
-				_zBuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(255, 0, 0));
-			}
-			else
-			{
-				_zBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(255, 0, 0)));
-			}
+			new Task(() =>
+				new Polygon(vectorO, vectorO, vectorX, Brushes.Red.Color, Brushes.Red.Color, Brushes.Red.Color,
+					_zBuffer).MakeFill(true)),
+			new Task(() =>
+				new Polygon(vectorO, vectorO, vectorY, Brushes.Lime.Color, Brushes.Lime.Color, Brushes.Lime.Color,
+					_zBuffer).MakeFill(true)),
+			new Task(() =>
+				new Polygon(vectorO, vectorO, vectorZ, Brushes.Blue.Color, Brushes.Blue.Color, Brushes.Blue.Color,
+					_zBuffer).MakeFill(true))
+		};
+		foreach (var linesTask in linesTasks)
+		{
+			linesTask.Start();
 		}
 
-		foreach (var key in Algorithms.Algorithms
-					 .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorY.X, vectorY.Y)).Select(item =>
-						 new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
-							 (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
-		{
-			if (_zBuffer.ContainsKey(key))
-			{
-				_zBuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(0, 255, 0));
-			}
-			else
-			{
-				_zBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(0, 255, 0)));
-			}
-		}
-
-		foreach (var key in Algorithms.Algorithms
-					 .Cda(new Point(vectorO.X, vectorO.Y), new Point(vectorZ.X, vectorZ.Y)).Select(item =>
-						 new Tuple<int, int>((int)Math.Round(item.X, MidpointRounding.AwayFromZero),
-							 (int)Math.Round(item.Y, MidpointRounding.AwayFromZero))))
-		{
-			if (_zBuffer.ContainsKey(key))
-			{
-				_zBuffer[key] = new Tuple<double, Color>(0, Color.FromRgb(0, 0, 255));
-			}
-			else
-			{
-				_zBuffer.Add(key, new Tuple<double, Color>(0, Color.FromRgb(0, 0, 255)));
-			}
-		}
+		Task.WaitAll(linesTasks);
 	}
 
 	private WriteableBitmap DrawPicture()
 	{
 		var image = new WriteableBitmap((int)_size.Width, (int)_size.Height, 96, 96, PixelFormats.Bgra32, null);
 		foreach (var pixel in _zBuffer.Where(x =>
-					 x.Key.Item1 < _size.Width && x.Key.Item1 >= 0 && x.Key.Item2 < _size.Height &&
-					 x.Key.Item2 >= 0 && x.Value.Item2 != RenderSettings._backGroundColor))
+			         x.Key.Item1 < _size.Width && x.Key.Item1 >= 0 && x.Key.Item2 < _size.Height &&
+			         x.Key.Item2 >= 0 && x.Value.Item2 != RenderSettings._backGroundColor))
 		{
 			image.WritePixels(new Int32Rect(pixel.Key.Item1, pixel.Key.Item2, 1, 1),
 				new byte[] { pixel.Value.Item2.B, pixel.Value.Item2.G, pixel.Value.Item2.R, 255 }, 4, 0);
@@ -218,7 +193,7 @@ internal class Renderer
 		DataUpdate(size, cameraTurn);
 		_stopwatch.Start();
 		await Task.Run(RenderPoints);
-		BuildCoordinateAxes();
+		await Task.Run(BuildCoordinateAxes);
 		var result = DrawPicture();
 		_stopwatch.Stop();
 		RenderTime = _stopwatch.ToString();
