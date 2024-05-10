@@ -20,11 +20,18 @@ internal static class Algorithms
 		double x = point1.X;
 		double y = point1.Y;
 		double z = point1.Z;
-
+		var key = (int)Math.Round(y, MidpointRounding.ToZero);
+		if (lines.TryGetValue(key, out var check))
+			if (x < check.Item1.X)
+				lines[key] = new Tuple<Point, Point>(new Point(x, z), check.Item2);
+			else if (x > check.Item2.X)
+				lines[key] = new Tuple<Point, Point>(check.Item1, new Point(x, z));
+		if (check == null)
+			lines.Add(key, new Tuple<Point, Point>(new Point(x, z), new Point(x, z)));
 		for (var i = 0; i < step; i++)
 		{
-			var key = (int)Math.Round(y, MidpointRounding.ToZero);
-			if (lines.TryGetValue(key, out var check))
+			key = (int)Math.Round(y, MidpointRounding.ToZero);
+			if (lines.TryGetValue(key, out check))
 				if (x < check.Item1.X)
 					lines[key] = new Tuple<Point, Point>(new Point(x, z), check.Item2);
 				else if (x > check.Item2.X)

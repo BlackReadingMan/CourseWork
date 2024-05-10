@@ -138,8 +138,7 @@ internal class Renderer
 		         ))
 		{
 			renderTasks[i] = new Task(() => polygon.MakeFill());
-			renderTasks[i].Start();
-			i++;
+			renderTasks[i++].Start();
 		}
 
 		Task.WaitAll(renderTasks);
