@@ -35,10 +35,7 @@ internal class Polygon
 		_dot11 = Vector3.Dot(_sideVec1, _sideVec1);
 		_dot12 = Vector3.Dot(_sideVec1, _sideVec2);
 		_dot22 = Vector3.Dot(_sideVec2, _sideVec2);
-		if (_dot11 == 0 && _dot12 == 0 || _dot12 == 0 && _dot22 == 0)
-			_denominator = 1;
-		else
-			_denominator = _dot11 * _dot22 - _dot12 * _dot12;
+		_denominator = _dot11 * _dot22 - _dot12 * _dot12;
 	}
 
 	public void MakeFill(in bool ignoreZ = false)
@@ -69,7 +66,6 @@ internal class Polygon
 				}
 			}
 		else
-
 			foreach (var lines in frame)
 			{
 				foreach (var item in Algorithms.Algorithms.Cda(lines.Value.Item1, lines.Value.Item2))
