@@ -38,55 +38,34 @@ internal class Polygon
 		_denominator = _dot11 * _dot22 - _dot12 * _dot12;
 	}
 
-	public void MakeFill(in bool ignoreZ = false)
+	public void MakeFill()
 	{
 		Dictionary<int, Tuple<Point, Point>> frame = [];
 		Algorithms.Algorithms.Cda(_point1, _point2, frame);
 		Algorithms.Algorithms.Cda(_point2, _point3, frame);
 		Algorithms.Algorithms.Cda(_point3, _point1, frame);
-		if (ignoreZ)
-			foreach (var lines in frame)
+
+		foreach (var lines in frame)
+		{
+			foreach (var item in Algorithms.Algorithms.Cda(lines.Value.Item1, lines.Value.Item2))
 			{
-				foreach (var item in Algorithms.Algorithms.Cda(lines.Value.Item1, lines.Value.Item2))
+				Tuple<int, int> key = new((int)Math.Round(item.X, MidpointRounding.ToZero), lines.Key);
+				lock (_zBuffer)
 				{
-					Tuple<int, int> key = new((int)Math.Round(item.X, MidpointRounding.ToZero), lines.Key);
-					lock (_zBuffer)
+					if (_zBuffer.TryGetValue(key, out var value))
 					{
-						if (_zBuffer.TryGetValue(key, out var value))
-						{
+						if (value.Item1 <= item.Y)
 							_zBuffer[key] = new Tuple<double, Color>(item.Y,
 								Barycentric(new Vector3(key.Item1, key.Item2, (float)item.Y)));
-						}
-						else
-							_zBuffer.Add(key,
-								new Tuple<double, Color>(item.Y,
-									Barycentric(new Vector3(key.Item1, key.Item2, (float)item.Y))));
-
 					}
+					else
+						_zBuffer.Add(key,
+							new Tuple<double, Color>(item.Y,
+								Barycentric(new Vector3(key.Item1, key.Item2, (float)item.Y))));
+
 				}
 			}
-		else
-			foreach (var lines in frame)
-			{
-				foreach (var item in Algorithms.Algorithms.Cda(lines.Value.Item1, lines.Value.Item2))
-				{
-					Tuple<int, int> key = new((int)Math.Round(item.X, MidpointRounding.ToZero), lines.Key);
-					lock (_zBuffer)
-					{
-						if (_zBuffer.TryGetValue(key, out var value))
-						{
-							if (value.Item1 <= item.Y)
-								_zBuffer[key] = new Tuple<double, Color>(item.Y,
-									Barycentric(new Vector3(key.Item1, key.Item2, (float)item.Y)));
-						}
-						else
-							_zBuffer.Add(key,
-								new Tuple<double, Color>(item.Y,
-									Barycentric(new Vector3(key.Item1, key.Item2, (float)item.Y))));
-
-					}
-				}
-			}
+		}
 	}
 
 	private Color Barycentric(in Vector3 pointPos)

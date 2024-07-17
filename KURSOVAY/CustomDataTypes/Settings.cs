@@ -48,7 +48,7 @@ public class Settings
 		}
 	}
 
-	public Vector3 _up { get; private set; }
+	public Vector3 _up { get; private set; } = new Vector3(0f, 1f, 0f);
 
 	public float Up
 	{
@@ -87,12 +87,12 @@ public class Settings
 
 	public float[] RadiusPhiTheta
 	{
-		get => [_radiusPhiTheta.X, _radiusPhiTheta.Y, _radiusPhiTheta.Z];
+		get => [_radiusPhiTheta.Z, _radiusPhiTheta.X, _radiusPhiTheta.Y];
 		set
 		{
 			try
 			{
-				_radiusPhiTheta = new Vector3(value);
+				_radiusPhiTheta = new Vector3(value[2], value[0], value[1]);
 			}
 			catch
 			{
@@ -139,15 +139,15 @@ public class Settings
 			}
 		}
 	}
-	private float _spectatorStep;
-	public float SpectatorStep
+	public Vector3 _spectatorStep { get; private set; }
+	public float[] SpectatorStep
 	{
-		get => _spectatorStep;
+		get => [_spectatorStep.X, _spectatorStep.Y, _spectatorStep.Z];
 		set
 		{
 			try
 			{
-				_spectatorStep = value;
+				_spectatorStep = new Vector3(value);
 			}
 			catch
 			{
