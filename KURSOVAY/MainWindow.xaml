@@ -6,12 +6,213 @@
         xmlns:vm="clr-namespace:CourseWork.ViewModels"
         xmlns:ct="clr-namespace:CourseWork.Controls"
         mc:Ignorable="d"
-        Title="КУРСОВАЯ" Height="450" Width="800" WindowState="Maximized"
+        Title="КУРСОВАЯ" Height="1080" Width="1920" WindowState="Maximized"
         >
     <Window.DataContext>
         <vm:MainWindowViewModel/>
     </Window.DataContext>
     <Grid>
-        <ct:Scene PaintedObj="{Binding CurrentObj, Mode=OneWay}" Settings="{Binding CurrentSettings, Mode=OneWay}" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="85*"/>
+            <ColumnDefinition Width="299*"/>
+        </Grid.ColumnDefinitions>
+        <ct:Scene PaintedObj="{Binding CurrentObj, Mode=OneWay}" Settings="{Binding CurrentSettings, Mode=OneWay}" Grid.Column="1"  />
+        <Grid Background="#FFBBBBBB">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="4*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Координаты начальной позиции"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="X:" VerticalAlignment="Center" Height="20"/>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="16,0,0,0" Grid.Row="1" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Y:" VerticalAlignment="Center" Height="20" Margin="77,0,0,0"/>
+                <TextBox HorizontalAlignment="Left"  Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="56" Margin="93,0,0,0" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Z:" VerticalAlignment="Center" Height="20" Margin="154,0,0,0"/>
+                <TextBox HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="57" Margin="170,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Поворот фигуры вокруг осей"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="X:" VerticalAlignment="Center" Height="20"/>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="16,0,0,0" Grid.Row="1" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Y:" VerticalAlignment="Center" Height="20" Margin="77,0,0,0"/>
+                <TextBox HorizontalAlignment="Left"  Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="56" Margin="93,0,0,0" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Z:" VerticalAlignment="Center" Height="20" Margin="154,0,0,0"/>
+                <TextBox HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="57" Margin="170,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="2">
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Множитель масштаба фигуры:"/></TextBlock>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="226,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Начальная позиция камеры"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="X:" VerticalAlignment="Center" Height="20"/>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="16,0,0,0" Grid.Row="1" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Y:" VerticalAlignment="Center" Height="20" Margin="77,0,0,0"/>
+                <TextBox HorizontalAlignment="Left"  Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="56" Margin="93,0,0,0" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Z:" VerticalAlignment="Center" Height="20" Margin="154,0,0,0"/>
+                <TextBox HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="57" Margin="170,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Позиция цели камеры"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="X:" VerticalAlignment="Center" Height="20"/>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="16,0,0,0" Grid.Row="1" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Y:" VerticalAlignment="Center" Height="20" Margin="77,0,0,0"/>
+                <TextBox HorizontalAlignment="Left"  Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="56" Margin="93,0,0,0" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Z:" VerticalAlignment="Center" Height="20" Margin="154,0,0,0"/>
+                <TextBox HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="57" Margin="170,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Наклон камеры"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="X:" VerticalAlignment="Center" Height="20"/>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="16,0,0,0" Grid.Row="1" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Y:" VerticalAlignment="Center" Height="20" Margin="77,0,0,0"/>
+                <TextBox HorizontalAlignment="Left"  Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="56" Margin="93,0,0,0" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Z:" VerticalAlignment="Center" Height="20" Margin="154,0,0,0"/>
+                <TextBox HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="57" Margin="170,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="6">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Шаг камеры"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="X:" VerticalAlignment="Center" Height="20"/>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="16,0,0,0" Grid.Row="1" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Y:" VerticalAlignment="Center" Height="20" Margin="77,0,0,0" />
+                <TextBox HorizontalAlignment="Left"  Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="56" Margin="93,0,0,0" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Z:" VerticalAlignment="Center" Height="20" Margin="154,0,0,0"/>
+                <TextBox HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="57" Margin="170,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="7">
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Угол обзора камеры:"/></TextBlock>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="160,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Дистанция затвора"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Ближняя:" VerticalAlignment="Center" Height="20"/>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="73,0,0,0" Grid.Row="1" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Дальняя:" VerticalAlignment="Center" Height="20" Margin="134,0,0,0"/>
+                <TextBox HorizontalAlignment="Left"  Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="56" Margin="204,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="9">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Положение изображения относительно центра экрана"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="X:" VerticalAlignment="Center" Height="20"/>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="16,0,0,0" Grid.Row="1" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Y:" VerticalAlignment="Center" Height="20" Margin="77,0,0,0"/>
+                <TextBox HorizontalAlignment="Left"  Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="56" Margin="93,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Глубина изображения"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Минимальная:" VerticalAlignment="Center" Height="20"/>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="112,0,0,0" Grid.Row="1" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Максимальная:" VerticalAlignment="Center" Height="20" Margin="173,0,0,0"/>
+                <TextBox HorizontalAlignment="Left"  Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="56" Margin="290,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="11">
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Источник света следует за камерой:"/></TextBlock>
+                <CheckBox Content="Следует" HorizontalAlignment="Left" Margin="268,0,0,0" VerticalAlignment="Center" FontSize="16" Focusable="False" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="12">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Начальная позиция света"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="X:" VerticalAlignment="Center" Height="20"/>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="16,0,0,0" Grid.Row="1" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Y:" VerticalAlignment="Center" Height="20" Margin="77,0,0,0" RenderTransformOrigin="1.021,0.498"/>
+                <TextBox HorizontalAlignment="Left"  Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="56" Margin="93,0,0,0" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Z:" VerticalAlignment="Center" Height="20" Margin="154,0,0,0"/>
+                <TextBox HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="57" Margin="170,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="13">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Цвет света"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="X:" VerticalAlignment="Center" Height="20"/>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="16,0,0,0" Grid.Row="1" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Y:" VerticalAlignment="Center" Height="20" Margin="77,0,0,0" RenderTransformOrigin="1.021,0.498"/>
+                <TextBox HorizontalAlignment="Left"  Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="56" Margin="93,0,0,0" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Z:" VerticalAlignment="Center" Height="20" Margin="154,0,0,0"/>
+                <TextBox HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="57" Margin="170,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="14">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Цвет объекта"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="X:" VerticalAlignment="Center" Height="20"/>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="16,0,0,0" Grid.Row="1" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Y:" VerticalAlignment="Center" Height="20" Margin="77,0,0,0" RenderTransformOrigin="1.021,0.498"/>
+                <TextBox HorizontalAlignment="Left"  Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="56" Margin="93,0,0,0" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Z:" VerticalAlignment="Center" Height="20" Margin="154,0,0,0"/>
+                <TextBox HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="57" Margin="170,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Grid Grid.Row="15">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" FontSize="16"><Run Language="ru-ru" Text="Цвет заднего фона"/></TextBlock>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="X:" VerticalAlignment="Center" Height="20"/>
+                <TextBox HorizontalAlignment="Left" FontSize="16" VerticalAlignment="Center" Width="56" Margin="16,0,0,0" Grid.Row="1" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Y:" VerticalAlignment="Center" Height="20" Margin="77,0,0,0" RenderTransformOrigin="1.021,0.498"/>
+                <TextBox HorizontalAlignment="Left"  Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="56" Margin="93,0,0,0" Height="24" IsTabStop="False"/>
+                <TextBlock HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" Text="Z:" VerticalAlignment="Center" Height="20" Margin="154,0,0,0"/>
+                <TextBox HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" FontSize="16" VerticalAlignment="Center" Width="57" Margin="170,0,0,0" Height="24" IsTabStop="False"/>
+            </Grid>
+            <Button Content="Применить настройки" HorizontalAlignment="Center" Grid.Row="16" VerticalAlignment="Center" Height="57" Width="173"/>
+        </Grid>
     </Grid>
 </Window>

@@ -13,7 +13,7 @@ public partial class Scene
 {
 	private readonly Renderer _renderer;
 	private Vector3 _turnVector3 = Vector3.Zero;
-	private KeyEventArgs? _pressedKey;
+	private Key? _pressedKey;
 	private bool _running;
 	private ImageSource? _imageSource;
 
@@ -29,31 +29,31 @@ public partial class Scene
 		_turnVector3 = Vector3.Zero;
 		switch (_pressedKey)
 		{
-			case { Key: Key.Up }:
+			case  Key.Up :
 				_turnVector3[2]--;
 				break;
-			case { Key: Key.Down }:
+			case Key.Down :
 				_turnVector3[2]++;
 				break;
-			case { Key: Key.Left }:
+			case Key.Left:
 				_turnVector3[1]--;
 				break;
-			case { Key: Key.Right }:
+			case Key.Right:
 				_turnVector3[1]++;
 				break;
-			case { Key: Key.Add }:
+			case Key.Add:
 				_turnVector3[0]--;
 				break;
-			case { Key: Key.Subtract }:
+			case Key.Subtract:
 				_turnVector3[0]++;
 				break;
-			case { Key: Key.OemPlus }:
+			case Key.OemPlus:
 				_turnVector3[0]--;
 				break;
-			case { Key: Key.OemMinus }:
+			case Key.OemMinus:
 				_turnVector3[0]++;
 				break;
-			case { Key: Key.Enter }:
+			case Key.Enter:
 				_turnVector3 = new Vector3(-1f, -1f, -1f);
 				break;
 		}
@@ -117,12 +117,66 @@ public partial class Scene
 	private void UC_KeyDown(object sender, KeyEventArgs e)
 	{
 		if (_running || PaintedObj is null || Settings is null) return;
-		_pressedKey = e;
+		_pressedKey = e.Key;
 		SceneUpdateAsync();
 	}
 
 	private void UserControl_Loaded(object sender, RoutedEventArgs e)
 	{
 		Keyboard.Focus(this);
+	}
+
+	private void UserControl_MouseDown(object sender, MouseButtonEventArgs e)
+	{
+		Keyboard.Focus(this);
+	}
+
+	private void Button_Click(object sender, RoutedEventArgs e)
+	{
+		if (_running || PaintedObj is null || Settings is null) return;
+		_pressedKey = Key.OemMinus;
+		SceneUpdateAsync();
+	}
+
+	private void Button_Click_1(object sender, RoutedEventArgs e)
+	{
+		if (_running || PaintedObj is null || Settings is null) return;
+		_pressedKey = Key.Up;
+		SceneUpdateAsync();
+	}
+
+	private void Button_Click_2(object sender, RoutedEventArgs e)
+	{
+		if (_running || PaintedObj is null || Settings is null) return;
+		_pressedKey = Key.OemPlus;
+		SceneUpdateAsync();
+	}
+
+	private void Button_Click_3(object sender, RoutedEventArgs e)
+	{
+		if (_running || PaintedObj is null || Settings is null) return;
+		_pressedKey = Key.Left;
+		SceneUpdateAsync();
+	}
+
+	private void Button_Click_4(object sender, RoutedEventArgs e)
+	{
+		if (_running || PaintedObj is null || Settings is null) return;
+		_pressedKey = Key.Down;
+		SceneUpdateAsync();
+	}
+
+	private void Button_Click_5(object sender, RoutedEventArgs e)
+	{
+		if (_running || PaintedObj is null || Settings is null) return;
+		_pressedKey = Key.Right;
+		SceneUpdateAsync();
+	}
+
+	private void Button_Click_6(object sender, RoutedEventArgs e)
+	{
+		if (_running || PaintedObj is null || Settings is null) return;
+		_pressedKey = Key.Enter;
+		SceneUpdateAsync();
 	}
 }

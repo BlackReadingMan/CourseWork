@@ -6,19 +6,47 @@
              xmlns:local="clr-namespace:CourseWork.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
-             Loaded="UserControl_Loaded" KeyDown="UC_KeyDown"
+             Loaded="UserControl_Loaded" KeyDown="UC_KeyDown" MouseDown="UserControl_MouseDown"
              >
     <Grid>
-        <Image x:Name="Picture"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="43*"/>
+            <RowDefinition Height="32*"/>
+        </Grid.RowDefinitions>
+        <Image x:Name="Picture" Grid.RowSpan="2"/>
         <Label x:Name="RenderTimer" 
                FontSize="20" 
                HorizontalAlignment="Right" 
                VerticalAlignment="Top" 
-               Foreground="White"/>
+               Foreground="White" Grid.Row="0"/>
         <Label x:Name="Tips" 
                FontSize="17" 
                HorizontalAlignment="Right" 
                VerticalAlignment="Bottom" 
-               Content="↵ - поставить камеру в&#10;начальную позицию&#10;↑ - поднять камеру&#10;↓ - опустить камеру &#10;← - сдвинуть камеру влево &#10;→ - сдвинуть камеру вправо &#10;+ - приблизить камеру &#10;- - отдалить камеру" FontWeight="Bold"/>
+               Content="↵ - поставить камеру в&#10;начальную позицию&#10;↑ - поднять камеру&#10;↓ - опустить камеру &#10;← - сдвинуть камеру влево &#10;→ - сдвинуть камеру вправо &#10;+ - приблизить камеру &#10;- - отдалить камеру" FontWeight="Bold" Grid.Row="1" Height="186" Width="242"/>
+        <Grid Margin="0,162,0,191" HorizontalAlignment="Right" Grid.RowSpan="2" VerticalAlignment="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Button Content="Отдалить" HorizontalAlignment="Left" VerticalAlignment="Top" Height="33" Width="82" Grid.Column="0" Grid.Row="0" Click="Button_Click"/>
+                <Button Content="Вверх" HorizontalAlignment="Left" VerticalAlignment="Top" Height="33" Width="82" Grid.Column="1" Grid.Row="0" Click="Button_Click_1"/>
+                <Button Content="Приблизить" HorizontalAlignment="Left" VerticalAlignment="Top" Height="33" Width="82" Grid.Column="2" Grid.Row="0" Click="Button_Click_2"/>
+                <Button Content="Влево" HorizontalAlignment="Left" VerticalAlignment="Top" Height="33" Width="82" Grid.Column="0" Grid.Row="1" Click="Button_Click_3"/>
+                <Button Content="Вниз" HorizontalAlignment="Left" VerticalAlignment="Top" Height="33" Width="82" Grid.Column="1" Grid.Row="1" Click="Button_Click_4"/>
+                <Button Content="Вправо" HorizontalAlignment="Left" VerticalAlignment="Top" Height="33" Width="82" Grid.Column="2" Grid.Row="1" Click="Button_Click_5"/>
+            </Grid>
+            <Button Content="Визуализировать" HorizontalAlignment="Center" VerticalAlignment="Center" Height="33" Width="246" Grid.Row="1" Click="Button_Click_6"/>
+        </Grid>
     </Grid>
 </UserControl>

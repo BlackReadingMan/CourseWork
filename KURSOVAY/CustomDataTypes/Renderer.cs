@@ -43,10 +43,10 @@ internal class Renderer
 			switch (value.Z)
 			{
 				case <= 0:
-					value.Z += RenderSettings.SpectatorStep;
+					value.Z += RenderSettings._spectatorStep.Z;
 					break;
 				case >= 1:
-					value.Z -= RenderSettings.SpectatorStep;
+					value.Z -= RenderSettings._spectatorStep.Z;
 					break;
 			}
 
@@ -79,7 +79,7 @@ internal class Renderer
 			CameraSpherePosition = RenderSettings._radiusPhiTheta;
 		else
 			CameraSpherePosition +=
-				cameraTurn * new Vector3(1f, RenderSettings.SpectatorStep, RenderSettings.SpectatorStep);
+				cameraTurn * RenderSettings._spectatorStep;
 	}
 
 	private void DataUpdate(in Size size, in Vector3 cameraTurn)
@@ -102,12 +102,11 @@ internal class Renderer
 		_stopwatch.Reset();
 	}
 
-	private void RenderPoints()
+	private async Task RenderPointsAsync()
 	{
-		var renderTasks = new Task[PaintedObj.F.Count];
+		var renderTasks = new List<Task>();
 		var nullWorld = Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
 			RenderSettings._forward, RenderSettings._up);
-		var i = 0;
 		foreach (var polygon in from triangle in PaintedObj.F
 								let newNormal = Vector3.Normalize(
 									Matrix4X4Extension.VectorMatrixMultiplication(
@@ -136,14 +135,14 @@ internal class Renderer
 										RenderSettings._lightColor, RenderSettings._objectColor), _zBuffer
 								))
 		{
-			renderTasks[i] = new Task(() => polygon.MakeFill());
-			renderTasks[i++].Start();
+			renderTasks.Add(new Task(polygon.MakeFill));
+			renderTasks.Last().Start();
 		}
 
-		Task.WaitAll(renderTasks);
+		await Task.WhenAll(renderTasks);
 	}
 
-	private void BuildCoordinateAxes()
+	private async Task BuildCoordinateAxesAsync()
 	{
 		var newFinal = Matrix4X4Extension.CreateWorld(new Vector3(0, 0, 0),
 						   new Vector3(0, 0, -1), new Vector3(0, 1, 0)) * _view * _projection *
@@ -169,14 +168,14 @@ internal class Renderer
 			linesTask.Start();
 		}
 
-		Task.WaitAll(linesTasks);
+		await Task.WhenAll(linesTasks);
 	}
 
 	private WriteableBitmap DrawPicture()
 	{
 		var image = new WriteableBitmap((int)_size.Width, (int)_size.Height, 96, 96, PixelFormats.Bgra32, null);
 		foreach (var pixel in _zBuffer.Where(x =>
-					 x.Key.Item1 < _size.Width && x.Key.Item1 >= 0 && x.Key.Item2 < _size.Height &&
+					 x.Key.Item1 < (int)_size.Width && x.Key.Item1 >= 0 && x.Key.Item2 < (int)_size.Height &&
 					 x.Key.Item2 >= 0 && x.Value.Item2 != RenderSettings._backGroundColor))
 		{
 			image.WritePixels(new Int32Rect(pixel.Key.Item1, pixel.Key.Item2, 1, 1),
@@ -189,8 +188,8 @@ internal class Renderer
 	{
 		DataUpdate(size, cameraTurn);
 		_stopwatch.Start();
-		await Task.Run(RenderPoints);
-		await Task.Run(BuildCoordinateAxes);
+		await RenderPointsAsync();
+		await BuildCoordinateAxesAsync();
 		var result = DrawPicture();
 		_stopwatch.Stop();
 		RenderTime = _stopwatch.ToString();

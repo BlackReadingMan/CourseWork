@@ -6,8 +6,8 @@ internal static class Matrix4X4Extension
 {
 	public static Matrix4x4 CreateWorld(in Vector3 position, in Vector3 forward, in Vector3 up)
 	{
-		var axisZ = Vector3.Normalize(-forward);
-		var axisX = Vector3.Normalize(Vector3.Cross(up, axisZ));
+		var axisZ = Vector3.Normalize(-forward);//нормализуется вектор поворота
+		var axisX = Vector3.Normalize(Vector3.Cross(up, axisZ));//нормализуется вектор положения верха
 		var axisY = Vector3.Cross(axisZ, axisX);
 
 		var result = new Matrix4x4();
@@ -25,10 +25,12 @@ internal static class Matrix4X4Extension
 
 	public static Matrix4x4 CreateScale(in float scale)
 	{
-		return new Matrix4x4(scale, 0, 0, 0,
-			0, scale, 0, 0,
-			0, 0, scale, 0,
-			0, 0, 0, 1); ;
+		return new Matrix4x4
+			(scale, 0,     0,     0,
+			0,      scale, 0,     0,
+			0,      0,     scale, 0,
+			0,      0,     0,     1)
+			;
 	}
 
 	public static Matrix4x4 CreateLookAt(in Vector3 cameraPosition, in Vector3 cameraTarget,
