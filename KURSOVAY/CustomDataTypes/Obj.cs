@@ -78,16 +78,10 @@ public class Obj
 
 	private static async Task<List<string>?> ReadObjLinesAsync(string filePath)
 	{
-		List<string>? lines = [];
+		List<string>? lines;
 		try
 		{
-			using var reader = new StreamReader(Assembly.GetExecutingAssembly()
-				.GetManifestResourceStream(
-					Assembly.GetExecutingAssembly().GetName().Name + ".InputData." + filePath)!);
-			while (await reader.ReadLineAsync() is { } line)
-			{
-				lines.Add(line);
-			}
+			lines = new List<string>( await File.ReadAllLinesAsync(filePath));
 		}
 		catch
 		{

@@ -90,6 +90,11 @@ internal static class Algorithms
 			if (finalLight[i] > 1f)
 				finalLight[i] = 1f;
 		var result = finalLight * objectColor;
-		return Color.FromRgb((byte)(result.X * 255f), (byte)(result.Y * 255f), (byte)(result.Z * 255f));
+		return VectorToColor(result);
+	}
+
+	public static Color VectorToColor(Vector3 color)
+	{
+		return Color.FromRgb((byte)(255f * color.X), (byte)(255f * color.Y), (byte)(255f * color.Z));
 	}
 }

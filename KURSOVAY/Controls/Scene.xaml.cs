@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using CourseWork.Algorithms;
 
 namespace CourseWork.Controls;
 
@@ -108,8 +109,8 @@ public partial class Scene
 	private static void OnSettingsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
 		((Scene)d)._renderer.RenderSettings = (Settings)e.NewValue;
-		((Scene)d).Background = new SolidColorBrush(((Settings)e.NewValue)._backGroundColor);
-		var fontColor = Brushes.White.Color - ((Settings)e.NewValue)._backGroundColor;
+		((Scene)d).Background = new SolidColorBrush(Algorithms.Algorithms.VectorToColor(((Settings)e.NewValue).BackGroundColor));
+		var fontColor = Brushes.White.Color - Algorithms.Algorithms.VectorToColor(((Settings)e.NewValue).BackGroundColor);
 		fontColor.A = 255;
 		((Scene)d).Tips.Foreground = new SolidColorBrush(fontColor);
 	}

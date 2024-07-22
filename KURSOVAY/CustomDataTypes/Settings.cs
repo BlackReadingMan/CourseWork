@@ -1,383 +1,46 @@
-﻿using System.IO;
+﻿using Newtonsoft.Json;
+using System.IO;
 using System.Numerics;
-using System.Reflection;
-using System.Text.Json;
 using System.Windows;
-using System.Windows.Media;
 
 namespace CourseWork.CustomDataTypes;
 
 public class Settings
 {
-	private bool _isOk = true;
-	public Vector3 _position { get; private set; }
+	public Vector3 Position { get; set; }
+	public Vector3 Forward { get; set; }
+	public Vector3 Up { get; set; } = new(0, 1f, 0);
+	public float Scale { get; set; }
+	public Vector3 RadiusPhiTheta { get; set; }
+	public Vector3 CameraTarget { get; set; }
+	public Vector3 CameraUpVector { get; set; }
+	public Vector3 SpectatorStep { get; set; }
+	public float FieldOfView { get; set; }
+	public float NearPlaneDistance { get; set; }
+	public float FarPlaneDistance { get; set; }
+	public float X0 { get; set; }
+	public float Y0 { get; set; }
+	public float MinDepth { get; set; }
+	public float MaxDepth { get; set; }
 
-	public float[] Position
-	{
-		get => [_position.X, _position.Y, _position.Z];
-		set
-		{
-			try
-			{
-				_position = new Vector3(value);
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке Position");
-				_isOk = false;
-			}
-		}
-	}
+	public bool IsLightFollowsCamera { get; set; }
+	public Vector3 LightPosition { get; set; }
+	public Vector3 LightColor { get; set; }
+	public Vector3 ObjectColor { get; set; }
+	public Vector3 BackGroundColor { get; set; }
 
-	public Vector3 _forward { get; private set; }
-
-	public float[] Forward
-	{
-		get => [_forward.X, _forward.Y, _forward.Z];
-		set
-		{
-			try
-			{
-				_forward = new Vector3(value);
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке Forward");
-				_isOk = false;
-			}
-		}
-	}
-
-	public Vector3 _up { get; private set; } = new Vector3(0f, 1f, 0f);
-
-	public float Up
-	{
-		get => _up.Y;
-		set
-		{
-			try
-			{
-				_up = new Vector3(0, value, 0);
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке Up");
-				_isOk = false;
-			}
-		}
-	}
-	private float _scale;
-	public float Scale
-	{
-		get => _scale;
-		set
-		{
-			try
-			{
-				_scale = value;
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке Scale");
-				_isOk = false;
-			}
-		}
-	}
-	public Vector3 _radiusPhiTheta { get; private set; }
-
-	public float[] RadiusPhiTheta
-	{
-		get => [_radiusPhiTheta.Z, _radiusPhiTheta.X, _radiusPhiTheta.Y];
-		set
-		{
-			try
-			{
-				_radiusPhiTheta = new Vector3(value[2], value[0], value[1]);
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке RadiusPhiTheta");
-				_isOk = false;
-			}
-		}
-	}
-
-	public Vector3 _cameraTarget { get; private set; }
-
-	public float[] CameraTarget
-	{
-		get => [_cameraTarget.X, _cameraTarget.Y, _cameraTarget.Z];
-		set
-		{
-			try
-			{
-				_cameraTarget = new Vector3(value);
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке CameraTarget");
-				_isOk = false;
-			}
-		}
-	}
-
-	public Vector3 _cameraUpVector { get; private set; }
-
-	public float[] CameraUpVector
-	{
-		get => [_cameraUpVector.X, _cameraUpVector.Y, _cameraUpVector.Z];
-		set
-		{
-			try
-			{
-				_cameraUpVector = new Vector3(value);
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке CameraUpVector");
-				_isOk = false;
-			}
-		}
-	}
-	public Vector3 _spectatorStep { get; private set; }
-	public float[] SpectatorStep
-	{
-		get => [_spectatorStep.X, _spectatorStep.Y, _spectatorStep.Z];
-		set
-		{
-			try
-			{
-				_spectatorStep = new Vector3(value);
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке SpectatorStep");
-				_isOk = false;
-			}
-		}
-	}
-	private float _fieldOfView;
-	public float FieldOfView
-	{
-		get => _fieldOfView;
-		set
-		{
-			try
-			{
-				_fieldOfView = value;
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке FieldOfView");
-				_isOk = false;
-			}
-		}
-	}
-	private float _nearPlaneDistance;
-	public float NearPlaneDistance
-	{
-		get => _nearPlaneDistance;
-		set
-		{
-			try
-			{
-				_nearPlaneDistance = value;
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке NearPlaneDistance");
-				_isOk = false;
-			}
-		}
-	}
-	private float _farPlaneDistance;
-	public float FarPlaneDistance
-	{
-		get => _farPlaneDistance;
-		set
-		{
-			try
-			{
-				_farPlaneDistance = value;
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке FarPlaneDistance");
-				_isOk = false;
-			}
-		}
-	}
-
-	private float _x0;
-	public float X0
-	{
-		get => _x0;
-		set
-		{
-			try
-			{
-				_x0 = value;
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке X0");
-				_isOk = false;
-			}
-		}
-	}
-	private float _y0;
-	public float Y0
-	{
-		get => _y0;
-		set
-		{
-			try
-			{
-				_y0 = value;
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке Y0");
-				_isOk = false;
-			}
-		}
-	}
-	private float _minDepth;
-	public float MinDepth
-	{
-		get => _minDepth;
-		set
-		{
-			try
-			{
-				_minDepth = value;
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке MinDepth");
-				_isOk = false;
-			}
-		}
-	}
-	private float _maxDepth;
-	public float MaxDepth
-	{
-		get => _maxDepth;
-		set
-		{
-			try
-			{
-				_maxDepth = value;
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке MaxDepth");
-				_isOk = false;
-			}
-		}
-	}
-	private bool _lightFollowCamera;
-	public bool LightFollowCamera
-	{
-		get => _lightFollowCamera;
-		set
-		{
-			try
-			{
-				_lightFollowCamera = value;
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке LightFollowCamera");
-				_isOk = false;
-			}
-		}
-	}
-	public Vector3 _lightPosition { get; private set; }
-
-	public float[] LightPosition
-	{
-		get => [_lightPosition.X, _lightPosition.Y, _lightPosition.Z];
-		set
-		{
-			try
-			{
-				_lightPosition = new Vector3(value);
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке LightPosition");
-				_isOk = false;
-			}
-		}
-	}
-	public Vector3 _lightColor { get; private set; }
-
-	public float[] LightColor
-	{
-		get => [_lightColor.X, _lightColor.Y, _lightColor.Z];
-		set
-		{
-			try
-			{
-				_lightColor = new Vector3(value);
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке LightColor");
-				_isOk = false;
-			}
-		}
-	}
-	public Vector3 _objectColor { get; private set; }
-
-	public float[] ObjectColor
-	{
-		get => [_objectColor.X, _objectColor.Y, _objectColor.Z];
-		set
-		{
-			try
-			{
-				_objectColor = new Vector3(value);
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке ObjectColor");
-				_isOk = false;
-			}
-		}
-	}
-	public Color _backGroundColor { get; private set; }
-	public float[] BackGroundColor
-	{
-		get => [_backGroundColor.R, _backGroundColor.G, _backGroundColor.B];
-		set
-		{
-			try
-			{
-				_backGroundColor = Color.FromRgb((byte)(value[0] * 255), (byte)(value[1] * 255), (byte)(value[2] * 255));
-			}
-			catch
-			{
-				MessageBox.Show("Ошибка в настройке BackGroundColor");
-				_isOk = false;
-			}
-		}
-	}
 
 	public static async Task<Settings?> GetSettingsAsync(string filePath)
 	{
 		var settings = await ReadAsync<Settings>(filePath);
-		if (settings is { _isOk: false })
-			settings = null;
 		return settings;
 	}
 	private static async Task<T?> ReadAsync<T>(string filePath) where T : class
 	{
-		Stream assembly;
+		string json;
 		try
 		{
-			assembly = Assembly.GetExecutingAssembly().GetManifestResourceStream(Assembly.GetExecutingAssembly().GetName().Name + ".InputData." + filePath);
+			json = await File.ReadAllTextAsync(filePath);
 		}
 		catch
 		{
@@ -386,7 +49,7 @@ public class Settings
 		}
 		try
 		{
-			return await JsonSerializer.DeserializeAsync<T>(utf8Json: assembly);
+			return JsonConvert.DeserializeObject<T>(json);
 		}
 		catch
 		{

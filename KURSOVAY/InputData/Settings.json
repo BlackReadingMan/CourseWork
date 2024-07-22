@@ -1,11 +1,35 @@
 {
-	"Position": [ 0.0, 0.0, 0.0 ],
-	"Forward": [ 0.0, 0.0, -1.0 ],
+	"Position": {
+		"X": 0.0,
+		"Y": 0.0,
+		"Z": 0.0
+	},
+	"Forward": {
+		"X": 0.0,
+		"Y": 0.0,
+		"Z": -1.0
+	},
 	"Scale": 1.0,
-	"RadiusPhiTheta": [ 0.85, 0.5, 7 ],
-	"CameraTarget": [ 0.0, 0.0, 0.0 ],
-	"CameraUpVector": [ 0.0, 1.0, 0.0 ],
-	"SpectatorStep": [ 1,0.025,0.025 ],
+	"RadiusPhiTheta": {
+		"X": 0.85,
+		"Y": 0.5,
+		"Z": 7
+	},
+	"CameraTarget": {
+		"X": 0.0,
+		"Y": 0.0,
+		"Z": 0.0
+	},
+	"CameraUpVector": {
+		"X": 0.0,
+		"Y": 1.0,
+		"Z": 0.0
+	},
+	"SpectatorStep": {
+		"X": 1,
+		"Y": 0.025,
+		"Z": 0.025
+	},
 	"FieldOfView": 1,
 	"NearPlaneDistance": 0.9,
 	"FarPlaneDistance": 1,
@@ -13,9 +37,25 @@
 	"Y0": 0.0,
 	"MinDepth": -100,
 	"MaxDepth": 100,
-	"LightFollowCamera": true,
-	"LightPosition": [ 0.0, 3.0, 6.0 ],
-	"LightColor": [ 1.0, 1.0, 1.0 ],
-	"ObjectColor": [ 1.0, 0.5, 0.31 ],
-	"BackGroundColor": [ 0.0, 0.0, 0.0 ]
+	"IsLightFollowsCamera": true,
+	"LightPosition": {
+		"X": 0.0,
+		"Y": 3.0,
+		"Z": 6.0
+	},
+	"LightColor": {
+		"X": 1.0,
+		"Y": 1.0,
+		"Z": 1.0
+	},
+	"ObjectColor": {
+		"X": 1.0,
+		"Y": 0.5,
+		"Z": 0.31
+	},
+	"BackGroundColor": {
+		"X": 0.1,
+		"Y": 0.1,
+		"Z": 0.1
+	}
 }
