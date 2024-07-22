@@ -1,49 +1,66 @@
-﻿using CourseWork.CustomDataTypes;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using CourseWork.Controls;
+using CourseWork.CustomDataTypes;
+using CourseWork.Utilities;
+using System.Windows.Input;
 
 namespace CourseWork.ViewModels;
 
-internal class MainWindowViewModel : INotifyPropertyChanged
+internal class MainWindowViewModel
 {
 	private const string ObjPath = "InputData/Input.obj";
 	private const string SettingsPath = "InputData/Settings.json";
 
-	public MainWindowViewModel()
-	{
-		GetData();
-	}
+	private Scene? _scene;
 
-	private Obj? _currentObj;
-	public Obj? CurrentObj
+	private ICommand? _loadedCommand;
+	public ICommand LoadedCommand => _loadedCommand ??= new RelayCommand(async f =>
 	{
-		get => _currentObj;
-		set
+		if (f is Scene scene)
 		{
-			_currentObj = value;
-			OnPropertyChanged();
+			_scene = scene;
+			await GetData();
+			_scene?.CameraTransform(CameraTransformType.Start);
 		}
-	}
-	private Settings? _currentSettings;
-	public Settings? CurrentSettings
+	});
+
+
+	private ICommand? _hotkeyCommand;
+	public ICommand HotkeyCommand => _hotkeyCommand ??= new RelayCommand(async a =>
 	{
-		get => _currentSettings;
-		set
+		if (a is string key)
 		{
-			_currentSettings = value;
-			OnPropertyChanged();
+			switch (key)
+			{
+				case "Up":
+					_scene?.CameraTransform(CameraTransformType.Up);
+					break;
+				case "Down":
+					_scene?.CameraTransform(CameraTransformType.Down);
+					break;
+				case "Left":
+					_scene?.CameraTransform(CameraTransformType.Left);
+					break;
+				case "Right":
+					_scene?.CameraTransform(CameraTransformType.Right);
+					break;
+				case "OemPlus":
+					_scene?.CameraTransform(CameraTransformType.BringCloser);
+					break;
+				case "OemMinus":
+					_scene?.CameraTransform(CameraTransformType.MoveAway);
+					break;
+				case "Enter":
+					_scene?.CameraTransform(CameraTransformType.Start);
+					break;
+			}
 		}
-	}
+	});
 
-	private async void GetData()
-	{
-		CurrentObj = await Obj.GetObjAsync(ObjPath);
-		CurrentSettings = await Settings.GetSettingsAsync(SettingsPath);
-	}
 
-	public event PropertyChangedEventHandler? PropertyChanged;
-	protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+	private async Task GetData()
 	{
-		PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		var currentObj = await Obj.GetObjAsync(ObjPath).ConfigureAwait(false);
+		var currentSettings = await Settings.GetSettingsAsync(SettingsPath).ConfigureAwait(false);
+		_scene?.LoadData(currentObj, currentSettings);
 	}
 }

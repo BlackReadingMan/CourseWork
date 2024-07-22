@@ -11,9 +11,9 @@
 	},
 	"Scale": 1.0,
 	"RadiusPhiTheta": {
-		"X": 0.85,
-		"Y": 0.5,
-		"Z": 7
+		"X": 7,
+		"Y": 0.85,
+		"Z": 0.5
 	},
 	"CameraTarget": {
 		"X": 0.0,
@@ -31,7 +31,7 @@
 		"Z": 0.025
 	},
 	"FieldOfView": 1,
-	"NearPlaneDistance": 0.9,
+	"NearPlaneDistance": 0.1,
 	"FarPlaneDistance": 1,
 	"X0": 0.0,
 	"Y0": 0.0,

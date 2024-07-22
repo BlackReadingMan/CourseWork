@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Numerics;
-using System.Reflection;
 using System.Windows;
 
 namespace CourseWork.CustomDataTypes;
@@ -81,7 +80,7 @@ public class Obj
 		List<string>? lines;
 		try
 		{
-			lines = new List<string>( await File.ReadAllLinesAsync(filePath));
+			lines = new List<string>(await File.ReadAllLinesAsync(filePath));
 		}
 		catch
 		{

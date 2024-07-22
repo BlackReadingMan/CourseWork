@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 
-namespace CourseWork.CustomDataTypes
+namespace CourseWork.Algorithms
 {
 	internal class Line
 	{
@@ -28,11 +28,11 @@ namespace CourseWork.CustomDataTypes
 		public void MakeFill(in bool ignoreZ = false)
 		{
 			Dictionary<int, Tuple<Point, Point>> frame = [];
-			Algorithms.Algorithms.Cda(_point1, _point2, frame);
+			Algorithms.Cda(_point1, _point2, frame);
 			if (ignoreZ)
 				foreach (var lines in frame)
 				{
-					foreach (var item in Algorithms.Algorithms.Cda(lines.Value.Item1, lines.Value.Item2))
+					foreach (var item in Algorithms.Cda(lines.Value.Item1, lines.Value.Item2))
 					{
 						Tuple<int, int> key = new((int)Math.Round(item.X, MidpointRounding.ToZero), lines.Key);
 						lock (_zBuffer)
@@ -54,7 +54,7 @@ namespace CourseWork.CustomDataTypes
 
 				foreach (var lines in frame)
 				{
-					foreach (var item in Algorithms.Algorithms.Cda(lines.Value.Item1, lines.Value.Item2))
+					foreach (var item in Algorithms.Cda(lines.Value.Item1, lines.Value.Item2))
 					{
 						Tuple<int, int> key = new((int)Math.Round(item.X, MidpointRounding.ToZero), lines.Key);
 						lock (_zBuffer)
