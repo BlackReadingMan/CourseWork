@@ -2,7 +2,7 @@
 
 namespace CourseWork.Algorithms;
 
-internal static class Matrix4X4Extension
+internal static class Matrix4x4Calc
 {
 	public static Matrix4x4 CreateWorld(in Vector3 position, in Vector3 forward, in Vector3 up)
 	{
@@ -26,10 +26,10 @@ internal static class Matrix4X4Extension
 	public static Matrix4x4 CreateScale(in float scale)
 	{
 		return new Matrix4x4
-			(scale, 0,     0,     0,
-			0,      scale, 0,     0,
-			0,      0,     scale, 0,
-			0,      0,     0,     1)
+			(scale, 0, 0, 0,
+			0, scale, 0, 0,
+			0, 0, scale, 0,
+			0, 0, 0, 1)
 			;
 	}
 
