@@ -9,15 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="InputData\Settings.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="InputData\Input.obj" />
-    <EmbeddedResource Include="InputData\Settings.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.122" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>

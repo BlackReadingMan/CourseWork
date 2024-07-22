@@ -56,7 +56,6 @@ internal class MainWindowViewModel
 		}
 	});
 
-
 	private async Task GetData()
 	{
 		var currentObj = await Obj.GetObjAsync(ObjPath).ConfigureAwait(false);
