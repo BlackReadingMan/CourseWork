@@ -6,8 +6,8 @@ namespace CourseWork.ViewModels;
 
 internal class MainWindowViewModel : INotifyPropertyChanged
 {
-	private const string ObjPath = "Input.obj";
-	private const string SettingsPath = "Settings.json";
+	private const string ObjPath = "InputData/Input.obj";
+	private const string SettingsPath = "InputData/Settings.json";
 
 	public MainWindowViewModel()
 	{
